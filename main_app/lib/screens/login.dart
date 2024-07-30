@@ -1,7 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:main_app/Theme/mainTheme.dart';
+import 'package:main_app/firebase_options.dart';
+import 'package:main_app/services/firebase_auth_helper.dart';
 class LoginScreen extends StatefulWidget{
   const LoginScreen({super.key});
   @override
@@ -11,25 +15,61 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isShowPassword = false;
   IconData showIcon = Icons.visibility_outlined;
   IconData hideIcon = Icons.visibility_off_outlined;
+  final _mailKey = GlobalKey<FormState>();
+  final _mailController = TextEditingController();
+  final _passKey = GlobalKey<FormState>();
+  final _passController = TextEditingController();
+
+  User? user = null;
   void updateShowPassword(){
     setState(() {
       isShowPassword = !isShowPassword;
     });
   }
+  
+  Future<FirebaseApp> _initializeFirebase() async{
+    FirebaseApp firebaseApp = await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    User? user = FirebaseAuth.instance.currentUser;
+    if(user != null){
+      //go to home screen of the app 
+      print('login: user is not null!');
+    }
+    return firebaseApp;
+  }
+  
+  
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        CreateGroupIntroduce(),
-        Image.asset(
-          'images/logo_full.png',
-          fit: BoxFit.contain,
-          ),
-        CreateGroupLogin(context),
-        CreateOtherMethodGroup(context),
-      ],
-
+    return FutureBuilder(
+      future: _initializeFirebase(), 
+      builder: (context, snapshot){
+        if(snapshot.connectionState == ConnectionState.done){
+          return Scaffold(
+            body: SingleChildScrollView(
+              child: Column(
+                children: [
+                  CreateGroupIntroduce(),
+                  Image.asset(
+                    'images/logo_full.png',
+                    fit: BoxFit.contain,
+                    ),
+                  CreateGroupLogin(context),
+                  CreateOtherMethodGroup(context),
+                ],
+              ),
+            )
+          );
+        }
+        else{
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } 
+      },
     );
+    
   }
 
   Widget CreateGroupIntroduce(){
@@ -85,52 +125,88 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return Column(
       children: [
+        //EMAIL ADDRESS
         Container(
           margin: EdgeInsets.only(top: 10),
           width: realWidth,
-          child: TextFormField(
-            keyboardType: TextInputType.emailAddress,
-            decoration: InputDecoration(
-              label: Text('Enter Your Email'),
-              prefixIcon: Icon(Icons.email),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
+          child: Form(
+            key: _mailKey,
+            child: TextFormField(
+              controller: _mailController,
+              validator: (mail){
+                if(mail == null || mail.isEmpty)
+                  return 'Please enter email!';
+                else return null;
+              },
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecoration(
+                label: Text('Enter Your Email'),
+                prefixIcon: Icon(Icons.email),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                filled: true,
+                fillColor: AppThemeLight.primaryColor,
               ),
-              filled: true,
-              fillColor: AppThemeLight.primaryColor,
             ),
-          ),
+          )
         ),
         Container(
           margin: EdgeInsets.only(top: 10),
           width: realWidth,
-          child: TextFormField(
-            keyboardType: TextInputType.visiblePassword,
-            obscureText: !isShowPassword,
-            decoration: InputDecoration(
-              label: Text('Enter Your Password'),
-              prefixIcon: Icon(Icons.lock),
-              suffixIcon: IconButton(
-                icon: Icon(
-                  isShowPassword ? showIcon : hideIcon,
-                  color: AppThemeLight.cardColor,
+          child: Form(
+            key: _passKey,
+            child: TextFormField(
+              controller: _passController,
+              validator: (password){
+                if(password == null || password.isEmpty)
+                  return 'Please enter password!';
+                else return null;
+              },
+              keyboardType: TextInputType.visiblePassword,
+              obscureText: !isShowPassword,
+              decoration: InputDecoration(
+                label: Text('Enter Your Password'),
+                prefixIcon: Icon(Icons.lock),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    isShowPassword ? showIcon : hideIcon,
+                    color: AppThemeLight.cardColor,
+                  ),
+                  onPressed: ()=>{
+                    updateShowPassword()
+                  }, 
                 ),
-                onPressed: ()=>{
-                  updateShowPassword()
-                }, 
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                filled: true,
+                fillColor: AppThemeLight.primaryColor,
               ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              filled: true,
-              fillColor: AppThemeLight.primaryColor,
             ),
-          ),
+          )
         ),
         
         SizedBox(height: 15,),
         ElevatedButton(
-          onPressed: () => {}, 
+          onPressed: () async => {
+            if(_mailKey.currentState!.validate()){
+              print('email : ${_mailController.text}')
+            },
+            if(_passKey.currentState!.validate()){
+              print('password: ${_passController.text}' )
+            },
+            if(_passKey.currentState!.validate() && _mailKey.currentState!.validate()){
+              user = await FirebaseAuthHelper.signInUsingEmailAndPassword(email: _mailController.text, password: _passController.text),
+              if(user != null){
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('login successful!'))),
+                Navigator.pushNamed(context, '/started'),
+              }else{
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('There are something wrong!'))),
+              }
+            }
+
+          }, 
           style: ElevatedButton.styleFrom(
             backgroundColor: AppThemeLight.cardColor,
             shape: RoundedRectangleBorder(
@@ -217,12 +293,19 @@ class _LoginScreenState extends State<LoginScreen> {
               'Not register yet?',
               style: GoogleFonts.sofiaSansSemiCondensed(),
             ),
-            Text(
-              ' Create Account',
-              style: GoogleFonts.sofiaSansSemiCondensed(
-                fontWeight: FontWeight.w900,
+            InkWell(
+              onTap: ()=>{
+                Navigator.pushNamed(context, '/register')
+              },
+              child:  Text(
+                ' Create Account',
+                style: GoogleFonts.sofiaSansSemiCondensed(
+                  fontWeight: FontWeight.w900,
+                  decoration: TextDecoration.underline,
+                ),
               ),
             ),
+           
           ],
         )
       ],

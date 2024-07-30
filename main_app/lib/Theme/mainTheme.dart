@@ -6,7 +6,31 @@ Color primaryDark = Color.fromARGB(255, 3, 18, 27);
 Color secondaryDark = Color.fromARGB(255,20, 57, 81);
 Color btnDark = Color.fromARGB(255, 255, 213, 109);
 Color textDark = Color.fromARGB(255, 255, 255, 255);
-ThemeData AppThemeDark = ThemeData.dark().copyWith(primaryColor: primaryDark);
+ThemeData AppThemeDark = ThemeData.dark().copyWith(
+  primaryColor: primaryDark,
+  textTheme: TextTheme(
+    bodyMedium: TextStyle(
+      fontWeight: FontWeight.w500,
+      letterSpacing: 1.2,
+      fontSize: 14,
+      color: textDark,
+    ),
+    headlineLarge: GoogleFonts.sofiaSansSemiCondensed(
+      fontSize: 30,
+      color: textDark,
+      fontWeight: FontWeight.w500,
+      letterSpacing: 0.5,
+    ),
+    bodyLarge: GoogleFonts.sofiaSansSemiCondensed(
+      fontSize: 15,
+      color: textDark,
+      fontWeight: FontWeight.w400,
+      letterSpacing: 0.5
+    ),
+  ),
+  cardColor: btnDark,
+  secondaryHeaderColor: secondaryDark, 
+);
 
 
 // LIGHT VERSION
@@ -17,13 +41,26 @@ Color textLight = Color.fromARGB(255, 214, 130, 128);
 Color boxColor = Color.fromARGB(255, 255, 227, 179);
 ThemeData AppThemeLight = ThemeData.light().copyWith(
   primaryColor: primaryLight,
+  secondaryHeaderColor: secondaryLight,
   textTheme: TextTheme(
     bodyMedium: TextStyle(
       fontWeight: FontWeight.w500,
       letterSpacing: 1.2,
       fontSize: 14,
       color: Colors.white,
-    )
+    ),
+    headlineLarge: GoogleFonts.sofiaSansSemiCondensed(
+      fontSize: 30,
+      color: secondaryLight,
+      fontWeight: FontWeight.w500,
+      letterSpacing: 0.5,
+    ),
+    bodyLarge: GoogleFonts.sofiaSansSemiCondensed(
+      fontSize: 15,
+      color: secondaryLight,
+      fontWeight: FontWeight.w400,
+      letterSpacing: 0.5
+    ),
   ),
   cardColor: btnLight,
   );
