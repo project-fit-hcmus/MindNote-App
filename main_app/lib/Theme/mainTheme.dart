@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+enum ThemeStyle{dark, light}
+
 // DARK VERSION
 Color primaryDark = Color.fromARGB(255, 3, 18, 27);
 Color secondaryDark = Color.fromARGB(255,20, 57, 81);
@@ -9,7 +11,14 @@ Color textDark = Color.fromARGB(255, 255, 255, 255);
 ThemeData AppThemeDark = ThemeData.dark().copyWith(
   primaryColor: primaryDark,
   textTheme: TextTheme(
-    bodyMedium: TextStyle(
+    // this text is for text of button 
+    labelMedium: GoogleFonts.sofiaSansSemiCondensed(
+      fontWeight: FontWeight.w600,
+      letterSpacing: 1.2,
+      fontSize: 14,
+      color: primaryDark,
+    ),
+    bodyMedium: GoogleFonts.sofiaSansSemiCondensed(
       fontWeight: FontWeight.w500,
       letterSpacing: 1.2,
       fontSize: 14,
@@ -27,9 +36,14 @@ ThemeData AppThemeDark = ThemeData.dark().copyWith(
       fontWeight: FontWeight.w400,
       letterSpacing: 0.5
     ),
+    bodySmall: GoogleFonts.sofiaSansSemiCondensed(
+      color: textDark,
+      fontSize: 20,
+    )
   ),
   cardColor: btnDark,
-  secondaryHeaderColor: secondaryDark, 
+  
+  secondaryHeaderColor: Colors.white, 
 );
 
 
@@ -43,7 +57,14 @@ ThemeData AppThemeLight = ThemeData.light().copyWith(
   primaryColor: primaryLight,
   secondaryHeaderColor: secondaryLight,
   textTheme: TextTheme(
-    bodyMedium: TextStyle(
+    // this text is for text of button 
+    labelMedium: GoogleFonts.sofiaSansSemiCondensed(
+      fontWeight: FontWeight.w600,
+      letterSpacing: 1.2,
+      fontSize: 14,
+      color: primaryDark,
+    ),
+    bodyMedium: GoogleFonts.sofiaSansSemiCondensed(
       fontWeight: FontWeight.w500,
       letterSpacing: 1.2,
       fontSize: 14,
@@ -61,6 +82,21 @@ ThemeData AppThemeLight = ThemeData.light().copyWith(
       fontWeight: FontWeight.w400,
       letterSpacing: 0.5
     ),
+    bodySmall: GoogleFonts.sofiaSansSemiCondensed(
+      color: secondaryLight,
+      fontSize: 20,
+    )
   ),
   cardColor: btnLight,
   );
+
+class ThemeModeProvider with ChangeNotifier{
+  ThemeData _themeMode = AppThemeLight;
+  ThemeData get themeMode => _themeMode;
+  void updateThemeMode(ThemeData update){
+    _themeMode = update;
+    notifyListeners();
+  }
+}
+
+  
