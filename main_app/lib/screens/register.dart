@@ -1,13 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:main_app/Theme/mainTheme.dart';
 import 'package:main_app/services/firebase_auth_helper.dart';
+// import 'package:firebase_database/firebase_database.dart';
 
-// ADD SCROLL
 
 class RegisterScreen extends StatefulWidget{
   const RegisterScreen({super.key});
@@ -63,12 +62,12 @@ class _RegisterScreenState extends State<RegisterScreen>{
 
   Widget CreateHeaderRegister(){
     return Container(
-      margin: EdgeInsets.only(top: 60, bottom: 10, left: 10, right: 10),
+      margin: const EdgeInsets.only(top: 60, bottom: 10, left: 10, right: 10),
       child: Row(
         children: [
           Container(
             child: Image.asset('images/logo_icon.png'),
-            margin: EdgeInsets.only(right: 10),
+            margin: const EdgeInsets.only(right: 10),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,7 +106,7 @@ class _RegisterScreenState extends State<RegisterScreen>{
       children: [
         // FORM NAME
         Container(
-          margin: EdgeInsets.only(top: 60),
+          margin: const EdgeInsets.only(top: 60),
           width: realWidth,
           child: Form(
             key: _nameKey,
@@ -120,8 +119,8 @@ class _RegisterScreenState extends State<RegisterScreen>{
               controller: _nameController,
               keyboardType: TextInputType.name,
               decoration: InputDecoration(
-                label: Text('Name'),
-                prefixIcon: Icon(Icons.account_circle_outlined),
+                label: const Text('Name'),
+                prefixIcon: const Icon(Icons.account_circle_outlined),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -134,7 +133,7 @@ class _RegisterScreenState extends State<RegisterScreen>{
         ),
         // FORM EMAIL ADDRESS
         Container(
-          margin: EdgeInsets.only(top: 10),
+          margin: const EdgeInsets.only(top: 10),
           width: realWidth,
           child: Form(
             key: _mailKey,
@@ -148,8 +147,8 @@ class _RegisterScreenState extends State<RegisterScreen>{
               controller: _mailController,
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
-                label: Text('Email Address'),
-                prefixIcon: Icon(Icons.mail_outline),
+                label: const Text('Email Address'),
+                prefixIcon: const Icon(Icons.mail_outline),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -161,7 +160,7 @@ class _RegisterScreenState extends State<RegisterScreen>{
         ),
         //FORM PASSWORD
         Container(
-          margin: EdgeInsets.only(top: 10),
+          margin: const EdgeInsets.only(top: 10),
           width: realWidth,
           child: Form(
             key: _passKey,
@@ -176,8 +175,8 @@ class _RegisterScreenState extends State<RegisterScreen>{
               keyboardType: TextInputType.visiblePassword,
               obscureText: !isPasswordShow,
               decoration: InputDecoration(
-                label: Text('Password'),
-                prefixIcon: Icon(Icons.lock),
+                label: const Text('Password'),
+                prefixIcon: const Icon(Icons.lock),
                 suffixIcon: IconButton(
                   onPressed: () => {
                     updatePasswordShow()
@@ -197,7 +196,7 @@ class _RegisterScreenState extends State<RegisterScreen>{
         ),
         //FORM REPEAT PASSWORD
         Container(
-          margin: EdgeInsets.only(top: 10),
+          margin: const EdgeInsets.only(top: 10),
           width: realWidth,
           child: Form(
             key: _repeatKey,
@@ -205,7 +204,7 @@ class _RegisterScreenState extends State<RegisterScreen>{
               validator: (repeatPass){
                 if(repeatPass == null || repeatPass.isEmpty)
                   return 'Please enter repeat pass';
-                else if(_passController.text != null && !_passController.text.isEmpty && !(_passController.text.contains(repeatPass) && _passController.text.length == repeatPass.length))
+                else if(_passController.text != null && _passController.text.isNotEmpty && !(_passController.text.contains(repeatPass) && _passController.text.length == repeatPass.length))
                   return 'Password do not match';
                 else return null;
               },
@@ -213,8 +212,8 @@ class _RegisterScreenState extends State<RegisterScreen>{
               keyboardType: TextInputType.visiblePassword,
               obscureText: !isRepeatPassShow,
               decoration: InputDecoration(
-                label: Text('Confirm Password'),
-                prefixIcon: Icon(Icons.lock),
+                label: const Text('Confirm Password'),
+                prefixIcon: const Icon(Icons.lock),
                 suffixIcon: IconButton(
                   onPressed: () => {
                     updateRepeatPassShow(),
@@ -232,7 +231,7 @@ class _RegisterScreenState extends State<RegisterScreen>{
             ),
           ),
         ),
-        SizedBox(height: 20,),
+        const SizedBox(height: 20,),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -245,7 +244,7 @@ class _RegisterScreenState extends State<RegisterScreen>{
             ),
             Container(
               width: realWidth-20,
-              child: Text(
+              child: const Text(
                 'By registering, you are agreeing with our Terms of Use and Privacy Policy',
                 maxLines: 2,
                 softWrap: true,
@@ -254,7 +253,7 @@ class _RegisterScreenState extends State<RegisterScreen>{
             
           ],
         ),
-        SizedBox(height: 10,),
+        const SizedBox(height: 10,),
         ElevatedButton(
           onPressed: () async=> {
             if(_nameKey.currentState!.validate()){
@@ -270,17 +269,18 @@ class _RegisterScreenState extends State<RegisterScreen>{
               print("Repeat pass: ${_repeatController.text}")
             },
             if(!isAgreeWithPolicy){
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please check on private policy to register!'),)),
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please check on private policy to register!'),)),
             },
             if(_nameKey.currentState!.validate() && _mailKey.currentState!.validate() && _passKey.currentState!.validate() && _repeatKey.currentState!.validate())
             {
               //REGISTER NEW ACCOUNT
               user = await FirebaseAuthHelper.registerUsingEmailAndPassword(name: _nameController.text, email: _mailController.text, password: _passController.text, context: context),
               if(user != null){
+                await FirebaseAuthHelper.updateFirebaseDatabase(user),
                 Navigator.pushNamed(context, '/started'),
               }
               else{
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to register new account!'))),
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to register new account!'))),
               }
             }
             
@@ -308,11 +308,11 @@ class _RegisterScreenState extends State<RegisterScreen>{
       // mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          margin: EdgeInsets.only(top: 10, bottom: 50),
+          margin: const EdgeInsets.only(top: 10, bottom: 50),
           width: MediaQuery.sizeOf(context).width*2/3,
           child: Row(
               children: [
-                Expanded(
+                const Expanded(
                   child: Divider(),
                 ),
                 Text(
@@ -321,7 +321,7 @@ class _RegisterScreenState extends State<RegisterScreen>{
 
                   ),  
                 ),
-                Expanded(
+                const Expanded(
                   child: Divider(),
                 )
               ],
@@ -333,7 +333,7 @@ class _RegisterScreenState extends State<RegisterScreen>{
            ElevatedButton(
             onPressed: () => {}, 
             style: ElevatedButton.styleFrom(
-              padding: EdgeInsets.only(top: 20, bottom: 20),
+              padding: const EdgeInsets.only(top: 20, bottom: 20),
               backgroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -345,11 +345,11 @@ class _RegisterScreenState extends State<RegisterScreen>{
               height: 20,
             ),
           ),
-          SizedBox(width: 10,),
+          const SizedBox(width: 10,),
           ElevatedButton(
             onPressed: () => {}, 
             style: ElevatedButton.styleFrom(
-              padding: EdgeInsets.only(top: 18, bottom: 18),
+              padding: const EdgeInsets.only(top: 18, bottom: 18),
               backgroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -363,7 +363,7 @@ class _RegisterScreenState extends State<RegisterScreen>{
           )
           ],
         ),
-        SizedBox(height: 20,),
+        const SizedBox(height: 20,),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -398,9 +398,9 @@ class _RegisterScreenState extends State<RegisterScreen>{
       print('Register successfull!!');
     }on FirebaseAuthException catch(e){
       if(e.code == 'weak-password'){
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('The password provided is too weak!')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: const Text('The password provided is too weak!')));
       }else if(e.code == 'email-already-in-use'){
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('The account already exists for that email!')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: const Text('The account already exists for that email!')));
       }
     }catch(e){
       print(e);

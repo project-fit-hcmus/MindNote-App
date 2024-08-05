@@ -48,6 +48,8 @@ class DefaultFirebaseOptions {
     authDomain: 'mindnoteapp-e5af4.firebaseapp.com',
     storageBucket: 'mindnoteapp-e5af4.appspot.com',
     measurementId: 'G-NHK7H6GD41',
+    databaseURL: "https://mindnoteapp-e5af4-default-rtdb.asia-southeast1.firebasedatabase.app",      //add new IMPORTATNT
+
   );
 
   static const FirebaseOptions android = FirebaseOptions(

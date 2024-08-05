@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:main_app/screens/addNewNote.dart';
+import 'package:main_app/screens/profile.dart';
 import 'package:main_app/screens/register.dart';
 import 'package:main_app/screens/search.dart';
 import 'package:main_app/screens/setting.dart';
@@ -14,7 +15,7 @@ enum ThemeStyle{dark, light}
 //   runApp(const MyApp());
 // }
 
-void main() {
+void main() async{
   runApp(
     ChangeNotifierProvider(
       create: (context) => ThemeModeProvider(),
@@ -40,14 +41,15 @@ class MyApp extends StatelessWidget {
    
 
     return MaterialApp(
-      initialRoute: '/started',
+      initialRoute: '/login',
       routes: {
-        '/login': (context) => LoginScreen(),
-        '/register': (context) => RegisterScreen(),
-        '/started': (context) => StartedScreen(),
-        '/newNote': (context) => AddNewNoteScreen(),
-        '/search': (context) => SearchScreen(),
-        '/setting': (context) => SettingScreen(),
+        '/login': (context) => const LoginScreen(),
+        '/register': (context) => const RegisterScreen(),
+        '/started': (context) => const StartedScreen(),
+        '/newNote': (context) => const AddNewNoteScreen(),
+        '/search': (context) => const SearchScreen(),
+        '/setting': (context) => const SettingScreen(),
+        '/profile': (context) => ProfileScreen(),
       },
 
       title: 'Flutter Demo',
@@ -56,7 +58,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       // home: const MyHomePage(title: 'Flutter Demo Home Page'),
-      home: StartedScreen(),
+      home: const StartedScreen(),
     );
   }
 }

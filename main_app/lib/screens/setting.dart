@@ -31,12 +31,12 @@ class _SettingScreenState extends State<SettingScreen>{
     
     return 
        Padding(
-        padding: EdgeInsets.all(8),
+        padding: const EdgeInsets.all(8),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(height: 60,),
+            const SizedBox(height: 60,),
             Row(
               children: [
                 IconButton(
@@ -45,7 +45,7 @@ class _SettingScreenState extends State<SettingScreen>{
                   }, 
                   icon: Icon(
                     Icons.arrow_back_ios_new,
-                    color: theme.secondaryHeaderColor,
+                    color: theme.canvasColor,
                   ),
                 ),
                 Container(
@@ -57,14 +57,14 @@ class _SettingScreenState extends State<SettingScreen>{
                 
               ],
             ),
-            SizedBox(height: 10,),
+            const SizedBox(height: 10,),
             Container(
-              margin: EdgeInsets.only(left: 20),
+              margin: const EdgeInsets.only(left: 20),
               child: Row(
               children: [
                 Icon(
                   Icons.contrast,
-                  color: theme.secondaryHeaderColor,
+                  color: theme.canvasColor,
                 ),
                 Text(
                   '   Theme',
@@ -74,7 +74,7 @@ class _SettingScreenState extends State<SettingScreen>{
               ),
             ),
             Container(
-              margin: EdgeInsets.only(left: 20),
+              margin: const EdgeInsets.only(left: 20),
               child: Column(
                 children: [
                   RadioListTile<ThemeStyle>(
@@ -121,7 +121,7 @@ class _SettingScreenState extends State<SettingScreen>{
                       ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: theme.cardColor,
-                      padding: EdgeInsets.only(top: 10, bottom: 10, left: 50, right: 50),
+                      padding: const EdgeInsets.only(top: 10, bottom: 10, left: 50, right: 50),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       )

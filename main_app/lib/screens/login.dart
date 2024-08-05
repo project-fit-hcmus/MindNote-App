@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:main_app/Theme/mainTheme.dart';
 import 'package:main_app/firebase_options.dart';
+import 'package:main_app/services/database_helper.dart';
 import 'package:main_app/services/firebase_auth_helper.dart';
 class LoginScreen extends StatefulWidget{
   const LoginScreen({super.key});
@@ -19,8 +19,10 @@ class _LoginScreenState extends State<LoginScreen> {
   final _mailController = TextEditingController();
   final _passKey = GlobalKey<FormState>();
   final _passController = TextEditingController();
+  User? currentUser;
 
-  User? user = null;
+  User? user;
+  UserCredential? userCredential;
   void updateShowPassword(){
     setState(() {
       isShowPassword = !isShowPassword;
@@ -28,10 +30,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
   
   Future<FirebaseApp> _initializeFirebase() async{
+    WidgetsFlutterBinding.ensureInitialized();
     FirebaseApp firebaseApp = await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    User? user = FirebaseAuth.instance.currentUser;
+    User? user = FirebaseAuth.instance.currentUser; 
     if(user != null){
       //go to home screen of the app 
       print('login: user is not null!');
@@ -42,6 +45,8 @@ class _LoginScreenState extends State<LoginScreen> {
   
   @override
   Widget build(BuildContext context) {
+    
+    
     return FutureBuilder(
       future: _initializeFirebase(), 
       builder: (context, snapshot){
@@ -77,11 +82,11 @@ class _LoginScreenState extends State<LoginScreen> {
         Column(
           children: [
             Container(
-              margin: EdgeInsets.only(top: 60),
+              margin: const EdgeInsets.only(top: 60),
               child: Row(
                 children: [
                   Container(
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
                     child: Text(
                       'Login Account',
                       style: GoogleFonts.sofiaSansSemiCondensed( 
@@ -93,7 +98,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-                  Icon(
+                  const Icon(
                     Icons.person_2_outlined
                   ),
                 ],
@@ -102,7 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Row(
               children: [
                 Container(
-                  padding: EdgeInsets.only(bottom: 8, left: 8, right: 8),
+                  padding: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
                   child: Text(
                     'Welcome back Mindnote!',
                     style: GoogleFonts.sofiaSansSemiCondensed(
@@ -127,7 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
       children: [
         //EMAIL ADDRESS
         Container(
-          margin: EdgeInsets.only(top: 10),
+          margin: const EdgeInsets.only(top: 10),
           width: realWidth,
           child: Form(
             key: _mailKey,
@@ -140,8 +145,8 @@ class _LoginScreenState extends State<LoginScreen> {
               },
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
-                label: Text('Enter Your Email'),
-                prefixIcon: Icon(Icons.email),
+                label: const Text('Enter Your Email'),
+                prefixIcon: const Icon(Icons.email),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -152,7 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
           )
         ),
         Container(
-          margin: EdgeInsets.only(top: 10),
+          margin: const EdgeInsets.only(top: 10),
           width: realWidth,
           child: Form(
             key: _passKey,
@@ -166,8 +171,8 @@ class _LoginScreenState extends State<LoginScreen> {
               keyboardType: TextInputType.visiblePassword,
               obscureText: !isShowPassword,
               decoration: InputDecoration(
-                label: Text('Enter Your Password'),
-                prefixIcon: Icon(Icons.lock),
+                label: const Text('Enter Your Password'),
+                prefixIcon: const Icon(Icons.lock),
                 suffixIcon: IconButton(
                   icon: Icon(
                     isShowPassword ? showIcon : hideIcon,
@@ -187,7 +192,7 @@ class _LoginScreenState extends State<LoginScreen> {
           )
         ),
         
-        SizedBox(height: 15,),
+        const SizedBox(height: 15,),
         ElevatedButton(
           onPressed: () async => {
             if(_mailKey.currentState!.validate()){
@@ -199,10 +204,11 @@ class _LoginScreenState extends State<LoginScreen> {
             if(_passKey.currentState!.validate() && _mailKey.currentState!.validate()){
               user = await FirebaseAuthHelper.signInUsingEmailAndPassword(email: _mailController.text, password: _passController.text),
               if(user != null){
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('login successful!'))),
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('login successful!'))),
+                DatabaseHelper.initialLocalDatabase(user),
                 Navigator.pushNamed(context, '/started'),
               }else{
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('There are something wrong!'))),
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('There are something wrong!'))),
               }
             }
 
@@ -230,11 +236,11 @@ class _LoginScreenState extends State<LoginScreen> {
       // mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          margin: EdgeInsets.only(top: 10, bottom: 50),
+          margin: const EdgeInsets.only(top: 10, bottom: 50),
           width: MediaQuery.sizeOf(context).width*2/3,
           child: Row(
               children: [
-                Expanded(
+                const Expanded(
                   child: Divider(),
                 ),
                 Text(
@@ -243,7 +249,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   ),  
                 ),
-                Expanded(
+                const Expanded(
                   child: Divider(),
                 )
               ],
@@ -253,9 +259,25 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
            ElevatedButton(
-            onPressed: () => {}, 
+            onPressed: () async  {
+              try{
+                userCredential = await FirebaseAuthHelper.signInUsingGoogle();
+                if(userCredential != null){
+                  Navigator.pushNamed(context, '/started');
+                  print('success login!');
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Login success!!!')));
+                }else{
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('There are some errors when login!!')));
+                  print('Login with gg failed!!');
+                }
+              } catch(e){
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ERROR')));
+              }
+              
+              
+            }, 
             style: ElevatedButton.styleFrom(
-              padding: EdgeInsets.only(top: 20, bottom: 20),
+              padding: const EdgeInsets.only(top: 20, bottom: 20),
               backgroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -267,11 +289,20 @@ class _LoginScreenState extends State<LoginScreen> {
               height: 20,
             ),
           ),
-          SizedBox(width: 10,),
+          const SizedBox(width: 10,),
           ElevatedButton(
-            onPressed: () => {}, 
+            onPressed: () async=> {
+              // userCredential = await FirebaseAuthHelper.signUnUsingFacebook(),
+              // if(userCredential != null){
+              //   Navigator.pushNamed(context, '/started'),
+              //   print('login with FB success!'),
+              // }else{
+              //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('There are some errors when login!!'))),
+              //   print('Login with gg failed!!'), 
+              // }
+            }, 
             style: ElevatedButton.styleFrom(
-              padding: EdgeInsets.only(top: 18, bottom: 18),
+              padding: const EdgeInsets.only(top: 18, bottom: 18),
               backgroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -285,7 +316,7 @@ class _LoginScreenState extends State<LoginScreen> {
           )
           ],
         ),
-        SizedBox(height: 20,),
+        const SizedBox(height: 20,),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
