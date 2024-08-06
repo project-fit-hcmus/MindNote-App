@@ -78,7 +78,7 @@ class _ProfileScreenState extends State<ProfileScreen>{
           ),
           TextButton(
             onPressed: (){
-              //TO DO SOMETHING 
+              Navigator.pushNamed(context, '/edit'); 
             }, 
             child: Text(
               'Edit Profile Photo',

@@ -4,9 +4,11 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:main_app/Theme/mainTheme.dart';
+import 'package:main_app/screens/noteDetail.dart';
 import 'package:main_app/services/support_function.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:main_app/database/entities/Note.dart';
 
 enum PopupChoice{itemOne, itemTwo}
 enum ThemeStyle{dark, light}
@@ -107,25 +109,45 @@ class _StartedScreenState extends State<StartedScreen>{
       builder: (context, snapshot){
         if(snapshot.hasData && snapshot.data!.snapshot.value != null){
           Map<dynamic, dynamic> values = snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
-          List<Card> items = [];
+          List<GestureDetector> items = [];
           values.forEach((key, value){
             if(value['noteUser'].toString().contains(user!.uid))
-              items.add(Card(
-                color: theme.secondaryHeaderColor,
-                child: ListTile(
-                  title: Text(
-                    '${value['noteTitle']}',
-                    style: GoogleFonts.sofiaSansSemiCondensed(
-                      color: Colors.white,
-                    ),  
+              items.add(GestureDetector(
+                onTap: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => NoteDetailScreen(
+                        note: Note(
+                          noteId: value['noteId'],
+                          noteUser: value['noteUser'],
+                          noteDate: value['noteDate'],
+                          noteDetail: value['noteDetail'],
+                          noteTitle: value['noteTitle'],
+                          noteContent: value['noteContent'],
+                          noteNumberCharacters: value['noteNumberOfCharacter'],
+                        ),
+                      )
+                    ),
+                  );
+                },
+                child: Card(
+                  color: theme.secondaryHeaderColor,
+                  child: ListTile(
+                    title: Text(
+                      '${value['noteTitle']}',
+                      style: GoogleFonts.sofiaSansSemiCondensed(
+                        color: Colors.white,
+                      ),  
+                    ),
+                    subtitle: Text(
+                      '${SupportFunction.ConvertDate(value['noteDate'])}',
+                      style: GoogleFonts.sofiaSansSemiCondensed(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w300,
+                      ),
+                      ),
                   ),
-                  subtitle: Text(
-                    '${SupportFunction.ConvertDate(value['noteDate'])}',
-                    style: GoogleFonts.sofiaSansSemiCondensed(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w300,
-                    ),
-                    ),
                 ),
               )
             );

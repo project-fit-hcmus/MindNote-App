@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:main_app/screens/addNewNote.dart';
+import 'package:main_app/screens/editProfile.dart';
 import 'package:main_app/screens/profile.dart';
 import 'package:main_app/screens/register.dart';
 import 'package:main_app/screens/search.dart';
@@ -49,7 +50,8 @@ class MyApp extends StatelessWidget {
         '/newNote': (context) => const AddNewNoteScreen(),
         '/search': (context) => const SearchScreen(),
         '/setting': (context) => const SettingScreen(),
-        '/profile': (context) => ProfileScreen(),
+        '/profile': (context) => const ProfileScreen(),
+        '/edit': (context) => const EditProfile(),
       },
 
       title: 'Flutter Demo',

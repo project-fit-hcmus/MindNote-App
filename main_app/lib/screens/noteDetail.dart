@@ -1,28 +1,24 @@
-import 'dart:async';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:flutter/widgets.dart';
-import 'package:main_app/Theme/mainTheme.dart';
-import 'package:main_app/services/firebase_auth_helper.dart';
 import 'package:main_app/services/support_function.dart';
 import 'package:provider/provider.dart';
+import 'package:main_app/Theme/mainTheme.dart';
 import 'package:main_app/database/entities/Note.dart';
 
-class AddNewNoteScreen extends StatefulWidget{
-  const AddNewNoteScreen({super.key});
+
+class NoteDetailScreen extends StatefulWidget{
+  final Note note;
+  NoteDetailScreen({
+    required this.note,
+  });
   @override
-  State<StatefulWidget> createState() => _AddNewNoteScreenState();
+  State<StatefulWidget> createState()  => _NoteDetailScreenState();
+  
 }
 
-class _AddNewNoteScreenState extends State<AddNewNoteScreen> {
+class _NoteDetailScreenState extends State<NoteDetailScreen>{
   final TextEditingController _textEditingController = TextEditingController();       // NOTE CONTENT
   final TextEditingController _textTitleEditingController = TextEditingController();      // NOTE TITLE 
   int _wordCount = 0;       // NUMBER OF CHARACTER
-  String _dateOfNote = SupportFunction.getFormatedDate();  // NOTE DATE
-  String _dateDetail = SupportFunction.getCurrentTime() + "," + SupportFunction.getCurrentDayOfWeek();
-  User? user = FirebaseAuth.instance.currentUser;
 
   void _updateWordCount(){
     String text = _textEditingController.text;
@@ -30,15 +26,32 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> {
       _wordCount = SupportFunction.countNumberOfCharacter(text);
     });
   }
-
-  void _updateDateOfNote(String date){
+  void _updateTextController(String content){
     setState(() {
-      _dateOfNote = date;  
+      _textEditingController.text = content;
     });
+  }  
+
+  @override
+  void dispose() {
+    _textTitleEditingController.dispose();
+    _textEditingController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    print('call init state');
+    _textEditingController.text = widget.note.noteContent;
+    _textTitleEditingController.text = widget.note.noteTitle;
+    _updateWordCount();
+
   }
 
   @override
   Widget build(BuildContext context) {
+
     double size = MediaQuery.sizeOf(context).width;
     double height = MediaQuery.sizeOf(context).height;
     final themeModeProvider = Provider.of<ThemeModeProvider>(context, listen: true);
@@ -48,8 +61,7 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> {
         children: [
           CreateHeaderNewNote(context,themeModeProvider.themeMode, size),
           SizedBox(height: 10,),
-          CreateContentArea(context, themeModeProvider.themeMode, size, height),
-
+          CreateContentArea(context, themeModeProvider.themeMode, size, height)
         ],
       ),
     );
@@ -86,23 +98,7 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> {
         ),
         IconButton(
           onPressed:(){
-            String title = _textTitleEditingController.text;
-            if(title.isEmpty){
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please enter title of the note!!!'),));
-            }else{
-              Note t = Note(
-                noteId : SupportFunction.createRandomNoteId(),
-                noteUser: user!.uid,
-                noteContent: _textEditingController.text,
-                noteDate: _dateOfNote,
-                noteTitle: _textTitleEditingController.text,
-                noteDetail: _dateDetail,
-                noteNumberCharacters: _wordCount,
-              );
-              FirebaseAuthHelper.addANoteToFirebase(t);
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Add new note')));
-              Navigator.pushNamed(context, '/started');
-            }
+           
           }, 
           icon: Icon(
             Icons.check,
@@ -125,8 +121,9 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> {
               controller: _textTitleEditingController,
               style: theme.textTheme.headlineMedium,
               maxLines: 1,
+              
               decoration: InputDecoration(
-                hintText: 'Title',
+                // hintText: '${widget.note.noteTitle}',
                 hintStyle: theme.textTheme.headlineMedium,
                 focusedBorder: UnderlineInputBorder(
                   borderSide: BorderSide(color: Colors.transparent)
@@ -142,7 +139,7 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> {
           width: realWidth,
           margin: EdgeInsets.only(left: 20, right: 20),
           child: Text(
-            '${SupportFunction.ConvertDate(SupportFunction.getFormatedDate())} ${SupportFunction.getCurrentTime()} ${SupportFunction.getCurrentDayOfWeek()} | ${_wordCount} characters',
+            '${SupportFunction.ConvertDate(widget.note.noteDate)} ${widget.note.noteDetail.replaceAll(',', ' ')} | ${_wordCount} characters',
             style: theme.textTheme.displayMedium,
           ),
         ),
@@ -153,10 +150,13 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> {
               color: theme.primaryColor,
               child:TextField(
                 controller: _textEditingController,
-                onChanged: (_) => {_updateWordCount()},
+                onChanged: (_) => {
+                  _updateWordCount()
+                },
                 maxLines: 30,
                 style: theme.textTheme.displayMedium,
                 decoration: InputDecoration(
+                  // hintText: '${widget.note.noteContent}',
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.transparent)
                   ),
@@ -171,7 +171,7 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> {
         CreateBottomSetup(context, theme, realWidth, realHeight),
       ],
     );
-  }
+  }  
   Widget CreateBottomSetup(BuildContext context, ThemeData theme, double realWidth, double realHeight){
     return Container(
       child: Row(
@@ -212,4 +212,5 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> {
       ),
     );
   }
+
 }
