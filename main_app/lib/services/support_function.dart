@@ -2,6 +2,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'dart:math';
 
+import 'package:sqflite/utils/utils.dart';
+
 
 class SupportFunction{
   static String getFormatedDate(){
@@ -147,8 +149,33 @@ class SupportFunction{
         return 'null';
     }
   }
+
+  // ERROR FUNCTION
+  // lấy ra một chuỗi khoảng 30 ký tự để display trên card 
+  static String getDisplayTitle(String content, String keyword){
+    String temp = content.replaceAll('\n', ' ');
+    String result = '';
+    int pos = content.indexOf(keyword);
+    int before = pos - 15;
+    int after  = pos + keyword.length + 15;
+    bool check = false;
+    print('POSITION === $pos');
+    print('BEFORE === $before');
+    print('AFTER ==== $after');
+
+    if(before < 0) {
+      before = 0;
+    }else result += '...';
+    if(after >= temp.length){
+      after = temp.length - 1;
+      check = true;
+    }
+    result += temp.substring(before, after);
+    if(!check) result += '...';
+
+    
+    print(result);
+    return result;
+  }
 }
 
-// 'skins/pink_fabric_icon.jpg',
-//       'skins/flower_icon.jpg',
-//       'skins/fish_skin_icon.jpg',

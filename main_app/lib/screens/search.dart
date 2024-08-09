@@ -140,6 +140,7 @@ class _SearchScreenState extends State<SearchScreen> {
           List<GestureDetector> items = [];
           values.forEach((key, value){
             if(value['noteUser'] == user!.uid && value['noteContent'].toString().contains(keyword)){
+              // print('Result of the function ---> ' + SupportFunction.getDisplayTitle(value['noteContent'], keyword));
               items.add(GestureDetector(
                 onTap: (){
                   //TODO SOMETHING
@@ -164,12 +165,8 @@ class _SearchScreenState extends State<SearchScreen> {
                 child: Card(
                   color: theme.secondaryHeaderColor,
                   child: ListTile(
-                    title: Text(
-                      '${value['noteTitle']}',
-                      style: GoogleFonts.sofiaSansSemiCondensed( 
-                        color: Colors.white,
-                      ),
-                    ),
+                    title: DisplayRichText(SupportFunction.getDisplayTitle(value['noteContent'], keyword), keyword) ,
+
                     subtitle: Text(
                       '${SupportFunction.ConvertDate(value['noteDate'])}',
                       style: GoogleFonts.sofiaSansSemiCondensed(
@@ -211,6 +208,34 @@ class _SearchScreenState extends State<SearchScreen> {
             )
           ],)
       ),
+    );
+  }
+  Widget DisplayRichText(String content, String keyword){
+    List<TextSpan> textSpan = [];
+    int pos = content.indexOf(keyword);
+    textSpan.add(TextSpan(
+      text: content.substring(0, pos),
+      style: GoogleFonts.sofiaSansSemiCondensed( 
+        color: Colors.white,
+        fontSize: 18,
+      )
+    ));
+    textSpan.add(TextSpan(
+      text: keyword,
+      style: GoogleFonts.sofiaSansSemiCondensed(
+        background: Paint()..color = Color.fromARGB(255, 255, 247, 0),
+        fontSize: 18,
+      )
+    ));
+    textSpan.add(TextSpan(
+      text: content.substring(pos + keyword.length, content.length),
+      style: GoogleFonts.sofiaSansSemiCondensed( 
+        color: Colors.white,
+        fontSize: 18,
+      )
+    ));
+    return RichText(
+      text: TextSpan(children: textSpan),
     );
   }
 }

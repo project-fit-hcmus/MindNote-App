@@ -121,7 +121,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen>{
       children: [
         IconButton(
           onPressed: (){
-            Navigator.pushNamed(context, '/started');
+            Navigator.pop(context);
           }, 
           icon: Icon(
             Icons.arrow_back_ios_new,
