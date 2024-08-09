@@ -106,7 +106,7 @@ class FirebaseAuthHelper{
 
   static Future<void> addANoteToFirebase(Note note) async{
     try{
-      DatabaseReference ref = FirebaseDatabase.instance.ref('notes/' + SupportFunction.createRandomNoteId());
+      DatabaseReference ref = FirebaseDatabase.instance.ref('notes/' + note.noteId);
       await ref.set({
         'noteId': note.noteId,
         'noteUser': note.noteUser,

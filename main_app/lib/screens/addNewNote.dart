@@ -82,6 +82,7 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> {
           ),
           child: Column(
             children: [
+              SizedBox(height: 60,),
               CreateHeaderNewNote(context,themeModeProvider.themeMode, size),
               SizedBox(height: 10,),
               CreateContentArea(context, themeModeProvider.themeMode, size, height),
@@ -93,64 +94,71 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> {
     );
   }
   Widget CreateHeaderNewNote(BuildContext context, ThemeData theme, double realWidth){
-    return Container(
-      margin: EdgeInsets.only(top: 60, left: 10, right: 10),
-      child: Row(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        IconButton(
-          onPressed: (){
-            Navigator.pushNamed(context, '/started');
-          }, 
-          icon: Icon(
-            Icons.arrow_back_ios_new,
-            color: theme.canvasColor,
-          )
+        Row(
+          children: [
+            IconButton(
+              onPressed: (){
+                Navigator.pushNamed(context, '/started');
+              }, 
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: theme.canvasColor,
+              )
+            ),
+            Container(
+              width: realWidth*2/3,
+              child: Text(
+                'Notes',
+                style: theme.textTheme.headlineLarge, 
+              ),
+            ),
+          ],
         ),
-        Container(
-          width: realWidth*2/3,
-          child: Text(
-            'Notes',
-            style: theme.textTheme.headlineLarge, 
-          ),
-        ),
-        IconButton(
-          onPressed: (){
-            //TODO SOMETHING
-          },
-          icon:  Icon(
-            Icons.send,
-            color: theme.canvasColor,
-          ),
-        ),
-        IconButton(
-          onPressed:(){
-            String title = _textTitleEditingController.text;
-            if(title.isEmpty){
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please enter title of the note!!!'),));
-            }else{
-              Note t = Note(
-                noteId : SupportFunction.createRandomNoteId(),
-                noteUser: user!.uid,
-                noteContent: _textEditingController.text,
-                noteDate: _dateOfNote,
-                noteTitle: _textTitleEditingController.text,
-                noteDetail: _dateDetail,
-                noteNumberCharacters: _wordCount,
-                noteSkin: SupportFunction.ConvertToStringSkinVersion(skinVersion),
-              );
-              FirebaseAuthHelper.addANoteToFirebase(t);
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Add new note')));
-              Navigator.pushNamed(context, '/started');
-            }
-          }, 
-          icon: Icon(
-            Icons.check,
-            color: theme.canvasColor,
-          )
+        Row(
+          children: [
+            IconButton(
+              onPressed: (){
+                //TODO SOMETHING
+              },
+              icon:  Icon(
+                Icons.send,
+                color: theme.canvasColor,
+              ),
+            ),
+            IconButton(
+              onPressed:(){
+                String title = _textTitleEditingController.text;
+                if(title.isEmpty){
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please enter title of the note!!!'),));
+                }else{
+                  Note t = Note(
+                    noteId : SupportFunction.createRandomNoteId(),
+                    noteUser: user!.uid,
+                    noteContent: _textEditingController.text,
+                    noteDate: _dateOfNote,
+                    noteTitle: _textTitleEditingController.text,
+                    noteDetail: _dateDetail,
+                    noteNumberCharacters: _wordCount,
+                    noteSkin: SupportFunction.ConvertToStringSkinVersion(skinVersion),
+                  );
+                  FirebaseAuthHelper.addANoteToFirebase(t);
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Add new note')));
+                  Navigator.pushNamed(context, '/started');
+                }
+              }, 
+              icon: Icon(
+                Icons.check,
+                color: theme.canvasColor,
+              )
+            )
+          ],
         )
-      ]
-      ),
+      ],
     );
+  
   }
 
   Widget CreateContentArea(BuildContext context, ThemeData theme, double realWidth, double realHeight){
@@ -237,6 +245,7 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> {
           IconButton(
             onPressed: (){
               if(text == 'Skin'){
+                
                 _updateSetSkin();
               }
             }, 

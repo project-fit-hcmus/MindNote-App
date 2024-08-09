@@ -86,6 +86,24 @@ class _StartedScreenState extends State<StartedScreen>{
               )
             ),
             IconButton(
+              onPressed: (){
+                Navigator.pushNamed(context, '/calendar');
+              }, 
+              icon: Icon(
+                Icons.calendar_month,
+                color: theme.secondaryHeaderColor,  
+              )
+            ),
+            IconButton(
+              onPressed: (){
+                Navigator.pushNamed(context, '/tasks');
+              }, 
+              icon: Icon(
+                Icons.task_alt,
+                color: theme.secondaryHeaderColor,  
+              )
+            ),
+            IconButton(
               onPressed: () => {
                 Navigator.pushNamed(context, '/profile'),
               }, 

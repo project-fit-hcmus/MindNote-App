@@ -105,6 +105,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen>{
           ),
           child:  Column(
         children: [
+          SizedBox(height: 60,),
           CreateHeaderNewNote(context,themeModeProvider.themeMode, size),
           SizedBox(height: 10,),
           CreateContentArea(context, themeModeProvider.themeMode, size, height)
@@ -115,52 +116,59 @@ class _NoteDetailScreenState extends State<NoteDetailScreen>{
     );
   }
   Widget CreateHeaderNewNote(BuildContext context, ThemeData theme, double realWidth){
-    return Container(
-      margin: EdgeInsets.only(top: 60, left: 10, right: 10),
-      child: Row(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        IconButton(
-          onPressed: (){
-            Navigator.pop(context);
-          }, 
-          icon: Icon(
-            Icons.arrow_back_ios_new,
-            color: (skinVersion == -1) ?  theme.canvasColor : AppThemeLight.canvasColor,
-          )
+        Row(
+          children: [
+            IconButton(
+              onPressed: (){
+                Navigator.pop(context);
+              }, 
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: (skinVersion == -1) ?  theme.canvasColor : AppThemeLight.canvasColor,
+              )
+            ),
+            Container(
+              width: realWidth*2/3,
+              child: Text(
+                'Notes',
+                style: (skinVersion == -1) ? theme.textTheme.headlineLarge : AppThemeLight.textTheme.headlineLarge, 
+              ),
+            ),
+          ],
         ),
-        Container(
-          width: realWidth*2/3,
-          child: Text(
-            'Notes',
-            style: (skinVersion == -1) ? theme.textTheme.headlineLarge : AppThemeLight.textTheme.headlineLarge, 
-          ),
-        ),
-        IconButton(
-          onPressed: (){
-            //TODO SOMETHING
-            
-          },
-          icon:  Icon(
-            Icons.send,
-            color: (skinVersion == -1) ? theme.canvasColor : AppThemeLight.canvasColor,
-          ),
-        ),
-        IconButton(
+        Row(
+          children: [
+            IconButton(
+              onPressed: (){
+                //TODO SOMETHING
+                
+              },
+              icon:  Icon(
+                Icons.send,
+                color: (skinVersion == -1) ? theme.canvasColor : AppThemeLight.canvasColor,
+              ),
+            ),
+            IconButton(
 
-          onPressed:isChange ? (){
-            FirebaseAuthHelper.updateNote(_textTitleEditingController.text, _textEditingController.text, widget.note.noteId);
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Update success!!')));
-            Navigator.pushNamed(context, '/started');
-          } : null,
-           
-          icon: Icon(
-            Icons.check,
-            color: (isChange) ? ( (skinVersion == -1 ) ? theme.canvasColor : AppThemeLight.canvasColor) : Colors.grey.shade800,
-          )
-        )
-      ]
-      ),
+              onPressed:isChange ? (){
+                FirebaseAuthHelper.updateNote(_textTitleEditingController.text, _textEditingController.text, widget.note.noteId);
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Update success!!')));
+                Navigator.pushNamed(context, '/started');
+              } : null,
+              
+              icon: Icon(
+                Icons.check,
+                color: (isChange) ? ( (skinVersion == -1 ) ? theme.canvasColor : AppThemeLight.canvasColor) : Colors.grey.shade800,
+              )
+            )
+          ],
+        ),
+      ],
     );
+    
   }
 
   Widget CreateContentArea(BuildContext context, ThemeData theme, double realWidth, double realHeight){
@@ -259,6 +267,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen>{
               //TODO SOMETHING
               if(text == 'Skin'){
                 if(setSkin == true){
+                  print('update skin');
                   //updateSkin 
                   FirebaseAuthHelper.updateNoteSkin(SupportFunction.ConvertToStringSkinVersion(skinVersion), widget.note.noteId);
                 }

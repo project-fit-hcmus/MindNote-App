@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:main_app/screens/addNewNote.dart';
+import 'package:main_app/screens/calendar.dart';
 import 'package:main_app/screens/editProfile.dart';
 import 'package:main_app/screens/profile.dart';
 import 'package:main_app/screens/register.dart';
 import 'package:main_app/screens/search.dart';
 import 'package:main_app/screens/setting.dart';
 import 'package:main_app/screens/started.dart';
+import 'package:main_app/screens/tasks.dart';
 import 'screens/login.dart';
 import 'Theme/mainTheme.dart';
 import 'package:provider/provider.dart';
@@ -52,6 +54,8 @@ class MyApp extends StatelessWidget {
         '/setting': (context) => const SettingScreen(),
         '/profile': (context) => const ProfileScreen(),
         '/edit': (context) => const EditProfile(),
+        '/calendar': (context) => const CalendarScreen(),
+        '/tasks': (context) => const TasksScreen(),
       },
 
       title: 'Flutter Demo',
