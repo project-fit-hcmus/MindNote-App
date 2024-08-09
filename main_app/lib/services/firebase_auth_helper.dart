@@ -115,6 +115,43 @@ class FirebaseAuthHelper{
         'noteTitle': note.noteTitle,
         'noteNumberOfCharacter': note.noteNumberCharacters,
         'noteDetail': note.noteDetail,
+        'noteSkin': note.noteSkin,
+      });
+    }catch(e){
+      print(e);
+    }
+  }
+
+  static Future<void> updateNote(String title, String content, String id) async{
+    try{
+      DatabaseReference ref = FirebaseDatabase.instance.ref('notes/${id}');
+      await ref.update({
+        'noteTitle': title,
+        'noteContent': content,
+      });
+    }catch(e){
+      print(e);
+    }
+  }
+
+  static Future<void> updateUserInfo(String name, String bio, User? user) async{
+    try{
+      DatabaseReference ref = FirebaseDatabase.instance.ref('users/${user!.uid}');
+      await ref.update({
+        'accUserName': name,
+        'accBio': bio,
+      });
+      user.updateDisplayName(name);
+    }catch(e){
+      print(e);
+    }
+  }
+
+  static Future<void> updateNoteSkin(String skin, String noteId) async{
+    try{
+      DatabaseReference ref = FirebaseDatabase.instance.ref('notes/$noteId');
+      await ref.update({
+        'noteSkin' : skin,
       });
     }catch(e){
       print(e);

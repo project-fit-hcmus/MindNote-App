@@ -224,7 +224,8 @@ class _$NoteDAO extends NoteDAO {
             noteDate: row['noteDate'] as String,
             noteContent: row['noteContent'] as String,
             noteNumberCharacters: row['noteNumberCharacters'] as int,
-            noteDetail: row['noteDetail'] as String));
+            noteDetail: row['noteDetail'] as String,
+            noteSkin: row['noteSkin'] as String));
   }
 
   @override
@@ -237,7 +238,8 @@ class _$NoteDAO extends NoteDAO {
             noteDate: row['noteDate'] as String,
             noteContent: row['noteContent'] as String,
             noteNumberCharacters: row['noteNumberCharacters'] as int,
-            noteDetail: row['noteDetail'] as String),
+            noteDetail: row['noteDetail'] as String,
+            noteSkin: row['noteSkin'] as String,),
         arguments: [Uid]);
   }
 

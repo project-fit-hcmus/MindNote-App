@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:main_app/services/firebase_auth_helper.dart';
 import 'package:main_app/services/support_function.dart';
 import 'package:provider/provider.dart';
 import 'package:main_app/Theme/mainTheme.dart';
@@ -19,6 +20,29 @@ class _NoteDetailScreenState extends State<NoteDetailScreen>{
   final TextEditingController _textEditingController = TextEditingController();       // NOTE CONTENT
   final TextEditingController _textTitleEditingController = TextEditingController();      // NOTE TITLE 
   int _wordCount = 0;       // NUMBER OF CHARACTER
+  bool isChange = false;
+  bool setSkin = false;
+  int skinVersion = -1;
+
+  void _updateSkinVersion(int i){
+    setState(() {
+      skinVersion = i;
+    });
+  }
+
+  void _updateSetSkin(){
+    setState(() {
+      setSkin = !setSkin;
+    });
+  }
+
+  void _updateChangeState(String title, String content){
+    setState(() {
+      if(title == widget.note.noteTitle && content == widget.note.noteContent)
+        isChange = false;
+      else isChange = true;
+    });
+  }
 
   void _updateWordCount(){
     String text = _textEditingController.text;
@@ -45,24 +69,48 @@ class _NoteDetailScreenState extends State<NoteDetailScreen>{
     print('call init state');
     _textEditingController.text = widget.note.noteContent;
     _textTitleEditingController.text = widget.note.noteTitle;
+    skinVersion = SupportFunction.ConvertToIntSkinVersion(widget.note.noteSkin);
     _updateWordCount();
 
   }
 
   @override
   Widget build(BuildContext context) {
-
+    List<String> skins = [
+      'skins/leaf.jpg',
+      'skins/linear_green.jpg',
+      'skins/paper.jpg',
+      'skins/sky.jpg',
+      'skins/traditional.jpg',
+      'skins/magic.jpg',
+      'skins/stripe_pink.jpg',
+      'skins/green_pen.jpg',
+      'skins/pink_fabric.jpg',
+      'skins/flower.jpg',
+      'skins/fish_skin.jpg',
+    ];
     double size = MediaQuery.sizeOf(context).width;
     double height = MediaQuery.sizeOf(context).height;
     final themeModeProvider = Provider.of<ThemeModeProvider>(context, listen: true);
-    return Scaffold(
-      backgroundColor: themeModeProvider.themeMode.primaryColor,
-      body: Column(
+    return MaterialApp(
+      home: Scaffold(
+        extendBodyBehindAppBar: true,
+        backgroundColor: themeModeProvider.themeMode.primaryColor,
+        body: Container(
+          decoration: BoxDecoration(
+            image:DecorationImage(
+              image: AssetImage( (skinVersion != -1) ? skins[skinVersion] : ''),
+              fit: BoxFit.cover,
+            ),            
+          ),
+          child:  Column(
         children: [
           CreateHeaderNewNote(context,themeModeProvider.themeMode, size),
           SizedBox(height: 10,),
           CreateContentArea(context, themeModeProvider.themeMode, size, height)
         ],
+        ),  
+        ),
       ),
     );
   }
@@ -77,32 +125,37 @@ class _NoteDetailScreenState extends State<NoteDetailScreen>{
           }, 
           icon: Icon(
             Icons.arrow_back_ios_new,
-            color: theme.canvasColor,
+            color: (skinVersion == -1) ?  theme.canvasColor : AppThemeLight.canvasColor,
           )
         ),
         Container(
           width: realWidth*2/3,
           child: Text(
             'Notes',
-            style: theme.textTheme.headlineLarge, 
+            style: (skinVersion == -1) ? theme.textTheme.headlineLarge : AppThemeLight.textTheme.headlineLarge, 
           ),
         ),
         IconButton(
           onPressed: (){
             //TODO SOMETHING
+            
           },
           icon:  Icon(
             Icons.send,
-            color: theme.canvasColor,
+            color: (skinVersion == -1) ? theme.canvasColor : AppThemeLight.canvasColor,
           ),
         ),
         IconButton(
-          onPressed:(){
+
+          onPressed:isChange ? (){
+            FirebaseAuthHelper.updateNote(_textTitleEditingController.text, _textEditingController.text, widget.note.noteId);
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Update success!!')));
+            Navigator.pushNamed(context, '/started');
+          } : null,
            
-          }, 
           icon: Icon(
             Icons.check,
-            color: theme.canvasColor,
+            color: (isChange) ? ( (skinVersion == -1 ) ? theme.canvasColor : AppThemeLight.canvasColor) : Colors.grey.shade800,
           )
         )
       ]
@@ -116,15 +169,18 @@ class _NoteDetailScreenState extends State<NoteDetailScreen>{
         Container(
           margin: EdgeInsets.only(left: 20, right: 20),
           child: Material(
-            color: theme.primaryColor,
+            // color: theme.primaryColor,
+            color: Colors.transparent,
             child:TextField(
               controller: _textTitleEditingController,
-              style: theme.textTheme.headlineMedium,
+              style: (skinVersion == -1) ? theme.textTheme.headlineMedium : AppThemeLight.textTheme.headlineMedium,
               maxLines: 1,
+              onChanged: (text){
+                _updateChangeState(text, _textEditingController.text);
+              },
               
               decoration: InputDecoration(
-                // hintText: '${widget.note.noteTitle}',
-                hintStyle: theme.textTheme.headlineMedium,
+                hintStyle: (skinVersion == -1) ?  theme.textTheme.headlineMedium : AppThemeLight.textTheme.headlineMedium,
                 focusedBorder: UnderlineInputBorder(
                   borderSide: BorderSide(color: Colors.transparent)
                 ),
@@ -140,21 +196,22 @@ class _NoteDetailScreenState extends State<NoteDetailScreen>{
           margin: EdgeInsets.only(left: 20, right: 20),
           child: Text(
             '${SupportFunction.ConvertDate(widget.note.noteDate)} ${widget.note.noteDetail.replaceAll(',', ' ')} | ${_wordCount} characters',
-            style: theme.textTheme.displayMedium,
+            style: (skinVersion == -1) ? theme.textTheme.displayMedium : AppThemeLight.textTheme.displayMedium,
           ),
         ),
         Container(
           margin: EdgeInsets.only(left: 20, right: 20),
-          height: realHeight*1.8/3,
+          height: (!setSkin) ? realHeight*1.8/3 : realHeight * 1.5/3,
           child: Material(
-              color: theme.primaryColor,
+              color: Colors.transparent,
               child:TextField(
                 controller: _textEditingController,
-                onChanged: (_) => {
-                  _updateWordCount()
+                onChanged: (text) => {
+                  _updateWordCount(),
+                  _updateChangeState(_textTitleEditingController.text, text),
                 },
                 maxLines: 30,
-                style: theme.textTheme.displayMedium,
+                style: (skinVersion == -1) ? theme.textTheme.displayMedium : AppThemeLight.textTheme.displayMedium,
                 decoration: InputDecoration(
                   // hintText: '${widget.note.noteContent}',
                   focusedBorder: UnderlineInputBorder(
@@ -168,6 +225,8 @@ class _NoteDetailScreenState extends State<NoteDetailScreen>{
             ),
         ),
         Divider(),
+        if(setSkin)
+          createHorizontalSkin(),
         CreateBottomSetup(context, theme, realWidth, realHeight),
       ],
     );
@@ -181,31 +240,41 @@ class _NoteDetailScreenState extends State<NoteDetailScreen>{
           //GROUP TODO
           CreateGroupButton(Icons.task_alt, 'To-do', theme),
           //GROUP IMAGE
-          CreateGroupButton(Icons.image, 'Image', theme),
+          CreateGroupButton(Icons.wallpaper, 'Skin', theme),
           //GROUP REMINDER
           CreateGroupButton(Icons.notifications_none, 'Reminder', theme),
+          //GROUP DELETE 
+          CreateGroupButton(Icons.delete, 'Delete', theme),
         ]
       ),
     );
   }
   Widget CreateGroupButton(IconData icon, String text, ThemeData theme){
     return Container(
-      padding: EdgeInsets.only(left: 30, right: 30),
+      padding: EdgeInsets.only(left: 20, right: 20),
       child: Column(
         children: [
           IconButton(
             onPressed: (){
               //TODO SOMETHING
+              if(text == 'Skin'){
+                if(setSkin == true){
+                  //updateSkin 
+                  FirebaseAuthHelper.updateNoteSkin(SupportFunction.ConvertToStringSkinVersion(skinVersion), widget.note.noteId);
+                }
+                _updateSetSkin();
+              }
+
             }, 
             icon: Icon(
               icon,
-              color: theme.secondaryHeaderColor,  
+              color: (skinVersion == -1) ? theme.secondaryHeaderColor : AppThemeLight.secondaryHeaderColor,  
             )
           ),
           Container(
             child: Text(
               text,
-              style: theme.textTheme.bodyLarge,
+              style: (skinVersion == -1) ? theme.textTheme.bodyLarge : AppThemeLight.textTheme.bodyLarge,
             ),
           )
         ],
@@ -213,4 +282,42 @@ class _NoteDetailScreenState extends State<NoteDetailScreen>{
     );
   }
 
+  Widget createHorizontalSkin(){
+    List<String> skins = [
+      'skins/none.png',
+      'skins/leaf_icon.jpg',
+      'skins/linear_green_icon.jpg',
+      'skins/paper_icon.jpg',
+      'skins/sky_icon.jpg',
+      'skins/traditional_icon.jpg',
+      'skins/magic_icon.jpg',
+      'skins/stripe_pink_icon.jpg',
+      'skins/green_pen_icon.jpg',
+      'skins/pink_fabric_icon.jpg',
+      'skins/flower_icon.jpg',
+      'skins/fish_skin_icon.jpg',
+    ];
+    return Container(
+      height: 80,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: skins.length,
+        itemBuilder: (context, index){
+          return GestureDetector(
+            onTap: (){
+              _updateSkinVersion(index-1);
+            },
+            child: Padding(
+              padding: EdgeInsets.all(8),
+              child: Image.asset(
+                skins[index],
+                width: 70,
+                height: 70,
+                fit: BoxFit.cover,),
+            )
+          );
+        },
+      )    
+    );
+  }
 }

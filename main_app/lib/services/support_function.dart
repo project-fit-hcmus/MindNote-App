@@ -1,3 +1,4 @@
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'dart:math';
 
@@ -91,4 +92,63 @@ class SupportFunction{
     }
     return result;
   }
+
+  static int ConvertToIntSkinVersion(String input){
+    if(input == 'skins/leaf.jpg')
+      return 0;
+    else if(input == 'skins/linear_green.jpg')
+      return 1;
+    else if(input == 'skins/paper.jpg')
+      return 2;
+    else if(input == 'skins/sky.jpg')
+      return 3;
+    else if(input == 'skins/traditional.jpg')
+      return 4;
+    else if(input == 'skins/magic.jpg')
+      return 5;
+    else if(input == 'skins/stripe_pink.jpg')
+      return 6;
+    else if(input == 'skins/green_pen.jpg')
+      return 7;
+    else if(input == 'skins/pink_fabric_icon.jpg')
+      return 8;
+    else if(input == 'skins/flower_icon.jpg')
+      return 9;
+    else if(input == 'skins/fish_skin_icon.jpg')
+      return 10;
+    else return -1;
+  }
+
+  static String ConvertToStringSkinVersion(int input){
+    switch(input){
+      case 0:
+        return 'skins/leaf.jpg';
+      case 1:
+        return 'skins/linear_green.jpg';
+      case 2:
+        return 'skins/paper.jpg';
+      case 3:
+        return 'skins/sky.jpg';
+      case 4: 
+        return 'skins/traditional.jpg';
+      case 5:
+        return 'skins/magic.jpg';
+      case 6:
+        return 'skins/stripe_pink.jpg';
+      case 7:
+        return 'skins/green_pen.jpg';
+      case 8:
+        return 'skins/pink_fabric_icon.jpg';
+      case 9: 
+        return 'skins/flower_icon.jpg'; 
+      case 10:
+        return 'skins/fish_skin_icon.jpg';
+      default:
+        return 'null';
+    }
+  }
 }
+
+// 'skins/pink_fabric_icon.jpg',
+//       'skins/flower_icon.jpg',
+//       'skins/fish_skin_icon.jpg',

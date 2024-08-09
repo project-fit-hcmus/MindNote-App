@@ -1,5 +1,3 @@
-import 'dart:js_interop';
-
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -23,6 +21,7 @@ class _StartedScreenState extends State<StartedScreen>{
   ThemeStyle? curTheme ;
   ThemeData theme = AppThemeLight;
   User? user;
+ 
 
   void updateCurrentThemeStyle( ThemeStyle style){
     setState(() {
@@ -78,7 +77,9 @@ class _StartedScreenState extends State<StartedScreen>{
         Row(
           children: [
             IconButton(
-              onPressed: () => {}, 
+              onPressed: () => {
+                Navigator.pushNamed(context, '/search')
+              }, 
               icon: Icon(
                 Icons.search,
                 color: theme.secondaryHeaderColor,
@@ -126,6 +127,7 @@ class _StartedScreenState extends State<StartedScreen>{
                           noteTitle: value['noteTitle'],
                           noteContent: value['noteContent'],
                           noteNumberCharacters: value['noteNumberOfCharacter'],
+                          noteSkin: value['noteSkin'],
                         ),
                       )
                     ),
@@ -150,15 +152,17 @@ class _StartedScreenState extends State<StartedScreen>{
                   ),
                 ),
               )
-            );
+              );
           });
-          return ListView(
-            
-            shrinkWrap: true,
-            children: <Widget>[
-              for(var item in items) item
-            ],
-          );
+          if(!items.isEmpty)
+            return ListView(
+                shrinkWrap: true,
+                children: <Widget>[
+                  for(var item in items) item
+                ],
+            );
+          else return CreateGroupEmptyList(size, theme);
+          
         }else { 
           return CreateGroupEmptyList(size, theme);
         }

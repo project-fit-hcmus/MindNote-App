@@ -17,6 +17,8 @@ class Note{
   final int noteNumberCharacters;
   @ColumnInfo(name: 'noteDetail')
   final String noteDetail;
+  @ColumnInfo(name: 'noteSkin')
+  final String noteSkin;
   Note( {
     required String this.noteId,
     required String this.noteUser,
@@ -25,8 +27,8 @@ class Note{
     required String this.noteContent,
     required int this.noteNumberCharacters,
     required String this.noteDetail,
+    required String this.noteSkin,
   });
-  // Note(this.noteId, this.noteUser, this.noteTitle, this.noteContent, this.noteDate, this.noteDetail, this.noteNumberCharacters)
   
   //convert Note into Map
   Map<String, Object?> toMap(){
@@ -38,6 +40,7 @@ class Note{
       'noteContent': this.noteContent,
       'noteNumberCharacters': this.noteNumberCharacters,
       'noteDetail': this.noteDetail,
+      'noteSkin': this.noteSkin,
     };
   } 
   String getNoteUser(){return this.noteUser;}

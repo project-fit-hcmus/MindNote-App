@@ -23,6 +23,20 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> {
   String _dateOfNote = SupportFunction.getFormatedDate();  // NOTE DATE
   String _dateDetail = SupportFunction.getCurrentTime() + "," + SupportFunction.getCurrentDayOfWeek();
   User? user = FirebaseAuth.instance.currentUser;
+  bool setSkin = false;
+  int skinVersion = -1;
+
+  void _updateSkinVersion(int i){
+    setState(() {
+      skinVersion = i;
+    });
+  }
+
+  void _updateSetSkin(){
+    setState(() {
+      setSkin = !setSkin;
+    });
+  }
 
   void _updateWordCount(){
     String text = _textEditingController.text;
@@ -39,18 +53,42 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> {
 
   @override
   Widget build(BuildContext context) {
+    List<String> skins = [
+      'skins/leaf.jpg',
+      'skins/linear_green.jpg',
+      'skins/paper.jpg',
+      'skins/sky.jpg',
+      'skins/traditional.jpg',
+      'skins/magic.jpg',
+      'skins/stripe_pink.jpg',
+      'skins/green_pen.jpg',
+      'skins/pink_fabric.jpg',
+      'skins/flower.jpg',
+      'skins/fish_skin.jpg',
+    ];
     double size = MediaQuery.sizeOf(context).width;
     double height = MediaQuery.sizeOf(context).height;
     final themeModeProvider = Provider.of<ThemeModeProvider>(context, listen: true);
-    return Scaffold(
-      backgroundColor: themeModeProvider.themeMode.primaryColor,
-      body: Column(
-        children: [
-          CreateHeaderNewNote(context,themeModeProvider.themeMode, size),
-          SizedBox(height: 10,),
-          CreateContentArea(context, themeModeProvider.themeMode, size, height),
+    return MaterialApp(
+      home: Scaffold(
+        extendBodyBehindAppBar: true,
+        backgroundColor: themeModeProvider.themeMode.primaryColor,
+        body: Container(
+          decoration: BoxDecoration(
+            image:DecorationImage(
+              image: AssetImage( (skinVersion != -1) ? skins[skinVersion] : ''),
+              fit: BoxFit.cover,
+            ),            
+          ),
+          child: Column(
+            children: [
+              CreateHeaderNewNote(context,themeModeProvider.themeMode, size),
+              SizedBox(height: 10,),
+              CreateContentArea(context, themeModeProvider.themeMode, size, height),
 
-        ],
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -98,6 +136,7 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> {
                 noteTitle: _textTitleEditingController.text,
                 noteDetail: _dateDetail,
                 noteNumberCharacters: _wordCount,
+                noteSkin: SupportFunction.ConvertToStringSkinVersion(skinVersion),
               );
               FirebaseAuthHelper.addANoteToFirebase(t);
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Add new note')));
@@ -120,7 +159,7 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> {
         Container(
           margin: EdgeInsets.only(left: 20, right: 20),
           child: Material(
-            color: theme.primaryColor,
+            color: Colors.transparent,
             child:TextField(
               controller: _textTitleEditingController,
               style: theme.textTheme.headlineMedium,
@@ -148,9 +187,9 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> {
         ),
         Container(
           margin: EdgeInsets.only(left: 20, right: 20),
-          height: realHeight*1.8/3,
+          height: (!setSkin) ? realHeight*1.8/3 : realHeight*1.5/3,
           child: Material(
-              color: theme.primaryColor,
+              color: Colors.transparent,
               child:TextField(
                 controller: _textEditingController,
                 onChanged: (_) => {_updateWordCount()},
@@ -168,6 +207,8 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> {
             ),
         ),
         Divider(),
+        if(setSkin)
+          createHorizontalSkin(),
         CreateBottomSetup(context, theme, realWidth, realHeight),
       ],
     );
@@ -181,7 +222,7 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> {
           //GROUP TODO
           CreateGroupButton(Icons.task_alt, 'To-do', theme),
           //GROUP IMAGE
-          CreateGroupButton(Icons.image, 'Image', theme),
+          CreateGroupButton(Icons.wallpaper, 'Skin', theme),
           //GROUP REMINDER
           CreateGroupButton(Icons.notifications_none, 'Reminder', theme),
         ]
@@ -195,7 +236,9 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> {
         children: [
           IconButton(
             onPressed: (){
-              //TODO SOMETHING
+              if(text == 'Skin'){
+                _updateSetSkin();
+              }
             }, 
             icon: Icon(
               icon,
@@ -212,4 +255,45 @@ class _AddNewNoteScreenState extends State<AddNewNoteScreen> {
       ),
     );
   }
+  Widget createHorizontalSkin(){
+    List<String> skins = [
+      'skins/none.png',
+      'skins/leaf_icon.jpg',
+      'skins/linear_green_icon.jpg',
+      'skins/paper_icon.jpg',
+      'skins/sky_icon.jpg',
+      'skins/traditional_icon.jpg',
+      'skins/magic_icon.jpg',
+      'skins/stripe_pink_icon.jpg',
+      'skins/green_pen_icon.jpg',
+      'skins/pink_fabric_icon.jpg',
+      'skins/flower_icon.jpg',
+      'skins/fish_skin_icon.jpg',
+    ];
+    return Container(
+      height: 80,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: skins.length,
+        itemBuilder: (context, index){
+          return GestureDetector(
+            onTap: (){
+              _updateSkinVersion(index-1);
+            },
+            child: Padding(
+              padding: EdgeInsets.all(8),
+              child: Image.asset(
+                skins[index],
+                width: 70,
+                height: 70,
+                fit: BoxFit.cover,),
+            )
+          );
+        },
+      )
+      
+      
+    );
+  }
+
 }
