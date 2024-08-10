@@ -2,10 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:main_app/database/entities/Note.dart';
-import 'package:main_app/services/support_function.dart';
-
+import 'package:main_app/database/entities/Event.dart';
 
 class FirebaseAuthHelper{
   static Future<User?> registerUsingEmailAndPassword({
@@ -116,6 +114,20 @@ class FirebaseAuthHelper{
         'noteNumberOfCharacter': note.noteNumberCharacters,
         'noteDetail': note.noteDetail,
         'noteSkin': note.noteSkin,
+      });
+    }catch(e){
+      print(e);
+    }
+  }
+  static Future<void> addEventToFirebase(Event event) async{
+    try{
+      DatabaseReference ref = FirebaseDatabase.instance.ref('events/${event.eventId}');
+      await ref.set({
+        'eventId': event.eventId,
+        'eventUser': event.eventUser,
+        'eventType': event.eventSkinType,
+        'eventDate': event.eventDate,
+        'eventDetail': event.eventDetail,
       });
     }catch(e){
       print(e);

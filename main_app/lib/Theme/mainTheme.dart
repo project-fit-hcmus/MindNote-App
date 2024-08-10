@@ -15,6 +15,10 @@ ThemeData AppThemeDark = ThemeData.dark().copyWith(
   secondaryHeaderColor: secondaryDark,  // use for list note of card 
   highlightColor: textDark,       // Use for bio container(such as name, bio, mail box)
   canvasColor: textDark,          // use for overal text 
+  // the same between light and dark 
+  hintColor: eventColorType1,
+  hoverColor: eventColorType2,
+  focusColor: eventColorType3,
   textTheme: TextTheme(
     // this text is for text of button 
     labelMedium: GoogleFonts.sofiaSansSemiCondensed(
@@ -77,12 +81,21 @@ Color btnLight = const Color.fromARGB(255, 52, 207, 199);
 Color textLight = const Color.fromARGB(255, 214, 130, 128);
 Color boxColor = const Color.fromARGB(255, 255, 227, 179);
 Color subTextLight = Colors.black;
+Color eventColorType1 = const Color.fromARGB(255,227,192,248);
+Color eventColorType2 = const Color.fromARGB(233,208,243,221);
+Color eventColorType3 = const Color.fromARGB(255,252,246,186);
+
+
 ThemeData AppThemeLight = ThemeData.light().copyWith(
   primaryColor: primaryLight,
   secondaryHeaderColor: secondaryLight,
   highlightColor: boxColor,
   canvasColor: secondaryLight,
   cardColor: btnLight,
+  //the same between light and dark
+  hintColor: eventColorType1,
+  hoverColor: eventColorType2,
+  focusColor: eventColorType3,
   
   textTheme: TextTheme(
     // this text is for text of button 

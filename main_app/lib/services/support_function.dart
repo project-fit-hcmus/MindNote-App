@@ -150,8 +150,6 @@ class SupportFunction{
     }
   }
 
-  // ERROR FUNCTION
-  // lấy ra một chuỗi khoảng 30 ký tự để display trên card 
   static String getDisplayTitle(String content, String keyword){
     String temp = content.replaceAll('\n', ' ');
     String result = '';
@@ -159,10 +157,6 @@ class SupportFunction{
     int before = pos - 15;
     int after  = pos + keyword.length + 15;
     bool check = false;
-    print('POSITION === $pos');
-    print('BEFORE === $before');
-    print('AFTER ==== $after');
-
     if(before < 0) {
       before = 0;
     }else result += '...';
@@ -172,10 +166,32 @@ class SupportFunction{
     }
     result += temp.substring(before, after);
     if(!check) result += '...';
-
-    
-    print(result);
     return result;
+  }
+
+  static DateTime convertStringToDateTime(String input){
+    List<String> dateParts = input.split('/');      // extract day, month and year value
+    int day = int.parse(dateParts[0]);
+    int month = int.parse(dateParts[1]);
+    int year = int.parse(dateParts[2]);
+    return DateTime(year, month, day);      // create DateTime instance from day, month and year.
+  }
+
+  static String convertDateTimeToString(DateTime input){
+    String day = input.day.toString().padLeft(2,'0');     // ensure having 2 number for day 
+    String month = input.month.toString().padLeft(2,'0');
+    String year = input.year.toString();
+    return '$day/$month/$year';
+  }
+
+  static String editContentOfEvent(String input){
+    String result = '';
+    if(input.length > 30){
+      result = input.substring(0,27);
+      result += '...';
+    }
+    else result = input;
+    return input;
   }
 }
 
