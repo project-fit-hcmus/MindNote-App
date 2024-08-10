@@ -1,5 +1,6 @@
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:main_app/database/entities/Event.dart';
 import 'dart:math';
 
 import 'package:sqflite/utils/utils.dart';
@@ -192,6 +193,15 @@ class SupportFunction{
     }
     else result = input;
     return input;
+  }
+  static int CountNumberEventOfADay(List<Event> list, DateTime time){
+    int result = 0;
+    for(var item in list){
+      if(item.eventDate.day == time.day && item.eventDate.month == time.month && item.eventDate.year == time.year){
+        result++;
+      }
+    }
+    return result;
   }
 }
 

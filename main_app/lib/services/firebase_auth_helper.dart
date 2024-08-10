@@ -4,6 +4,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:main_app/database/entities/Note.dart';
 import 'package:main_app/database/entities/Event.dart';
+import 'package:main_app/services/support_function.dart';
 
 class FirebaseAuthHelper{
   static Future<User?> registerUsingEmailAndPassword({
@@ -125,8 +126,8 @@ class FirebaseAuthHelper{
       await ref.set({
         'eventId': event.eventId,
         'eventUser': event.eventUser,
-        'eventType': event.eventSkinType,
-        'eventDate': event.eventDate,
+        'eventSkinType': event.eventSkinType,
+        'eventDate': SupportFunction.convertDateTimeToString(event.eventDate),
         'eventDetail': event.eventDetail,
       });
     }catch(e){
