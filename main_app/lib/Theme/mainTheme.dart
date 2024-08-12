@@ -9,6 +9,28 @@ Color secondaryDark = const Color.fromARGB(255,20, 57, 81);
 Color btnDark = const Color.fromARGB(255, 255, 213, 109);
 Color textDark = const Color.fromARGB(255, 255, 255, 255);
 Color subTextDark = Colors.grey.shade600;
+
+ThemeData outside = ThemeData.from(
+  colorScheme: ColorScheme(
+    brightness: Brightness.light,
+    primary: Color.fromARGB(255,150,187,124),
+    onPrimary:  Color.fromARGB(255, 219,239,224),
+    secondary: Color.fromARGB(255,253,103,94),
+    onSecondary: Color.fromARGB(255, 255,223,221),
+    surface: Color.fromARGB(255,169,139,152),
+    onSurface: Color.fromARGB(255,226,221,245), 
+    
+    surfaceContainer: eventColorType1,
+    surfaceContainerLow: eventColorType2,
+    surfaceContainerLowest: eventColorType3,
+
+
+    error: Colors.red, 
+    onError: Colors.red,
+
+
+  ));
+
 ThemeData AppThemeDark = ThemeData.dark().copyWith(
   primaryColor: primaryDark,
   cardColor: btnDark,           // button color, <edit profile text>

@@ -4,6 +4,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:main_app/database/entities/Note.dart';
 import 'package:main_app/database/entities/Event.dart';
+import 'package:main_app/database/entities/Task.dart';
 import 'package:main_app/services/support_function.dart';
 
 class FirebaseAuthHelper{
@@ -171,5 +172,28 @@ class FirebaseAuthHelper{
     }
   }
   
+  static Future<void> addTaskToFirebase(Task task) async{
+    try{
+      DatabaseReference ref = FirebaseDatabase.instance.ref('tasks/${task.taskId}');
+      await ref.set({
+        'taskId': task.taskId,
+        'taskUser': task.taskUser,
+        'taskTitle': task.taskTitle,
+        'taskNumberOfDetail' : task.taskNumberOfDetail,
+        'taskNumberOfComplete': task.taskNumberOfComplete,
 
+      });
+      DatabaseReference ref2 = FirebaseDatabase.instance.ref('taskDetails/');
+      for(int i = 0 ; i < task.taskDetail.length; ++i){
+        await ref2.child('/${task.taskDetail[i].taskDetailId}').set({
+          'taskDetailId': task.taskDetail[i].taskDetailId,
+          'taskId': task.taskId,
+          'taskDetailContent': task.taskDetail[i].taskDetailContent,
+          'taskDetailStatus': task.taskDetail[i].taskDetailStatus,
+        }); 
+      }
+    }catch(e){
+      print(e);
+    }
+  }
 }

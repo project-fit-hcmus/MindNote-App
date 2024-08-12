@@ -7,7 +7,7 @@ import 'package:main_app/screens/register.dart';
 import 'package:main_app/screens/search.dart';
 import 'package:main_app/screens/setting.dart';
 import 'package:main_app/screens/started.dart';
-import 'package:main_app/screens/tasks.dart';
+import 'package:main_app/screens/tasksManager.dart';
 import 'screens/login.dart';
 import 'Theme/mainTheme.dart';
 import 'package:provider/provider.dart';

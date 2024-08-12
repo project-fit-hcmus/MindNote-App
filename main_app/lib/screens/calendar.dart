@@ -22,7 +22,7 @@ class _CalendarScreenState extends State<CalendarScreen>{
   CalendarFormat _calendarFormat = CalendarFormat.month;
   TextEditingController _eventController = TextEditingController();
   int _currentChosenSkin = 0;
-  List<Color> skinTypes = [AppThemeDark.hintColor, AppThemeDark.hoverColor, AppThemeDark.focusColor];
+  List<Color> skinTypes = [outside.colorScheme.surfaceContainer, outside.colorScheme.surfaceContainerLow, outside.colorScheme.surfaceContainerLowest];
   IconData choosenIcon = Icons.check;
   List<Event> fullData = [];
 
@@ -102,12 +102,12 @@ class _CalendarScreenState extends State<CalendarScreen>{
                       color: theme.canvasColor,
                   ),
                 ),
-                Container(
-                  child: Text(
-                    'Calendar',
-                    style: theme.textTheme.headlineLarge,
-                  ),
-                ),
+            Container(
+              child: Text(
+                'Calendar',
+                style: theme.textTheme.headlineLarge,
+              ),
+            ),
           ],
         ),
       ],
@@ -254,7 +254,7 @@ class MyAlertDialog extends StatefulWidget{
 class _MyAlertDialogState extends State<MyAlertDialog>{
   TextEditingController _eventController = TextEditingController();
   int _currentChosenSkin = 0;
-  List<Color> skinTypes = [AppThemeDark.hintColor, AppThemeDark.hoverColor, AppThemeDark.focusColor];
+  List<Color> skinTypes = [outside.colorScheme.surfaceContainer, outside.colorScheme.surfaceContainerLow, outside.colorScheme.surfaceContainerLowest];
   IconData choosenIcon = Icons.check;
   User? user = FirebaseAuth.instance.currentUser;
 
@@ -282,7 +282,6 @@ class _MyAlertDialogState extends State<MyAlertDialog>{
                 hintText: 'Enter Event Content',
               ),
             ),
-            // SizedBox(height: 20,),
             Container(
               width: width*2/3,
               height: 80,
