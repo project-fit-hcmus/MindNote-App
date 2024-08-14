@@ -120,7 +120,6 @@ class _TasksScreenState extends State<TasksScreen>{
                           fontSize: 25,
                           color: Colors.black,
                         ),
-                        // overflow: TextOverflow.,
                       ),
                     )
                   ],
@@ -169,7 +168,6 @@ class _TasksScreenState extends State<TasksScreen>{
                     elevation: 4,
                     color: theme.focusColor,
                     child: Row(
-                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         //A LINE OF COLOR 
                         Container(
@@ -208,7 +206,6 @@ class _TasksScreenState extends State<TasksScreen>{
                               ),
                               // TITLE 
                               Container(
-                                // alignment: Alignment.centerLeft,
                                 margin: EdgeInsets.only(left: 20),
                                 child: Text(
                                   overflow: TextOverflow.ellipsis,
@@ -264,9 +261,9 @@ class _TasksScreenState extends State<TasksScreen>{
             ),
             Center(
               child: Text(
-                '$percentage%',
+                '${percentage.toStringAsFixed(1)} %',
                 style: GoogleFonts.sofiaSansSemiCondensed(
-                  fontSize: 16,
+                  fontSize: 12,
                   color: Color.fromARGB(255,150,187,124),
                 ),  
               ),
@@ -351,6 +348,7 @@ class _TaskAlertDialogState extends State<TaskAlertDialog>{
         child: Column(
           children: [
             TextField(
+              autofocus: true,
               controller: _taskTitleControler,
               keyboardType: TextInputType.text,
               decoration: InputDecoration(
@@ -367,6 +365,7 @@ class _TaskAlertDialogState extends State<TaskAlertDialog>{
                       width: 200,
                       height: 40,
                       child: TextField(
+                        autofocus: true,
                         controller: _listController[item.key],
                       ),
                     ),
@@ -386,7 +385,7 @@ class _TaskAlertDialogState extends State<TaskAlertDialog>{
             IconButton(
               onPressed: (){
                 setState(() {
-                  list.add(TaskDetail(taskDetailContent: "", taskDetailStatus: false, taskDetailId: 'TASKDETAIL' + SupportFunction.createRandomNoteId(), taskId: ''));       
+                  list.add(TaskDetail(taskDetailContent: "", taskDetailStatus: false, taskDetailId: '', taskId: ''));       
                   _listController.add(TextEditingController());           
                 });
               }, 
@@ -399,12 +398,13 @@ class _TaskAlertDialogState extends State<TaskAlertDialog>{
       actions: [
         ElevatedButton(
           onPressed: (){
-            String taskId = 'TASK' + SupportFunction.createRandomNoteId();
+            String taskId = SupportFunction.createRandomNoteId();
             print( _taskTitleControler.text);
             for(int i = 0; i < _listController.length; ++i){
               print(_listController[i].text);
               list[i].setTaskDetailContent(_listController[i].text);
               list[i].setTaskId(taskId);
+              list[i].setTaskDetailId(SupportFunction.CreateRandomIdForTaskChild(taskId, i));
             }
             Task t = Task(
               taskId: taskId, 

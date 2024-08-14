@@ -38,7 +38,10 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>{
     return Scaffold(
       backgroundColor: themeModeProvider.themeMode.primaryColor,
       body: CustomScrollView(
+        shrinkWrap: true,
+        
         slivers: [
+          //  STABLE PART (DO NOT SCROLL)
           SliverToBoxAdapter(
             child: Column(
               children: [
@@ -50,6 +53,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>{
               ],
             ),
           ),
+          // SCROLL PART
+          
           SliverFixedExtentList(
             itemExtent: 200,
             
@@ -80,16 +85,15 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>{
       floatingActionButton: FloatingActionButton(
         onPressed: (){
           //TODO: ADD A NEW SINGLE TASK
-          // setState(() {
+            String before = _listCheck[_listCheck.length-1].taskDetailId;
+            before = before.substring(before.length-3, before.length);
             TaskDetail t = TaskDetail(
-              taskDetailId: SupportFunction.createRandomNoteId(), 
+              taskDetailId: SupportFunction.CreateRandomIdForTaskChild(widget.task.taskId, int.parse(before) + 1), 
               taskId: widget.task.taskId, 
               taskDetailContent: '', 
               taskDetailStatus:false,
             );
-            print(t);
-            FirebaseAuthHelper.addANewTaskDetail(t);
-          // });
+            FirebaseAuthHelper.addANewTaskDetail(t, widget.task.taskId, widget.task.taskNumberOfDetail+1);
         },
         child: Icon(Icons.add),
         backgroundColor: themeModeProvider.themeMode.cardColor,
@@ -161,14 +165,15 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>{
                 children: [
                   CustomPaint(
                     size: Size(150, 150),
-                    painter: CirclePainter(widget.task.taskNumberOfComplete * 100 / widget.task.taskNumberOfDetail),
+                    painter: CirclePainter(double.parse((widget.task.taskNumberOfComplete * 100 / widget.task.taskNumberOfDetail).toStringAsFixed(2))),
+                    
                   ),
                   Container(
                     width: 200,
                     height: 200,
                     alignment: Alignment.center,
                     child: Text(
-                      '${widget.task.taskNumberOfComplete * 100 / widget.task.taskNumberOfDetail} %',
+                      '${(widget.task.taskNumberOfComplete * 100 / widget.task.taskNumberOfDetail).toStringAsFixed(2)} %',
                       style: GoogleFonts.sofiaSansSemiCondensed(
                       fontSize: 30,
                       color: Color.fromARGB(255,150,187,124),
@@ -272,7 +277,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>{
           int i = 0;
           values.forEach((key, value){
             if(value['taskId'] == widget.task.taskId){
-              _listController.add(TextEditingController(text: value['taskDetailContent']));
+              TextEditingController curController = TextEditingController(text: value['taskDetailContent']);
+              _listController.add(curController);
               _listCheck.add(TaskDetail(
                 taskDetailId: value['taskDetailId'],
                 taskId: value['taskId'], 
@@ -288,18 +294,16 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>{
                       value: value['taskDetailStatus'], 
                       onChanged: (check){
                         //TODO: UPDATE TASK DETAIL STATUS
-                        print(_listCheck);
-                        print(widget.task.taskNumberOfComplete);
-                        print(check);
+                        // print(_listCheck);
+                        // print(widget.task.taskNumberOfComplete);
+                        // print(check);
                         FirebaseAuthHelper.updateTaskDetailStatus(value['taskDetailId'],check!);
                         
                         setState(() {
                           if(check == true)
                             widget.task.taskNumberOfComplete += 1;
                           else 
-                            
                             widget.task.taskNumberOfComplete -= 1;
-                          _listCheck[i-1].taskDetailStatus = check!;
                           
                         });
                       }
@@ -308,6 +312,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>{
                       width: 200,
                       height: 40,
                       child: TextField(
+                        autofocus: (value['taskDetailContent'] == '') ,
                         readOnly: value['taskDetailStatus'],
                         style: GoogleFonts.sofiaSansSemiCondensed(
                           decoration: (value['taskDetailStatus'] == true) ? TextDecoration.lineThrough : TextDecoration.none,
@@ -319,6 +324,30 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>{
                         keyboardType: TextInputType.text,
                       ),
                     ),
+                    //CONFIRM CHANGE BUTTON
+                    IconButton(
+                      onPressed: (){
+                        //TODO: HANDLE CONFIRM CHANGE DATA BUTTON
+                        if(value['taskDetailStatus'] != true){
+                          print('update information');
+                          FirebaseAuthHelper.updateTaskDetailContent(value['taskDetailId'], curController.text);
+                        }
+                      }, 
+                      icon: Icon(Icons.check)
+                    ),
+                    //REMOVE TASK BUTTON
+                    IconButton(
+                      onPressed: (){
+                        //TODO: HANDLE REMOVE A TASK BUTTON
+                        if(value['taskDetailStatus'] != true){
+                          print('delete information');
+                          FirebaseAuthHelper.deleteATaskDetail(value['taskDetailId'], widget.task.taskId, widget.task.taskNumberOfDetail - 1);
+                          print(_listController.length);
+                          print(_listCheck.length);
+                        }
+                      }, 
+                      icon: Icon(Icons.close_rounded),
+                    )
                   ],
                 ),
               ));
@@ -344,6 +373,7 @@ class CirclePainter extends CustomPainter {
   final double percentage;
 
   CirclePainter(this.percentage);
+  
 
   @override
   void paint(Canvas canvas, Size size) {

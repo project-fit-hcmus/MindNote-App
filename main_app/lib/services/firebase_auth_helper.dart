@@ -9,6 +9,7 @@ import 'package:main_app/database/entities/TaskDetail.dart';
 import 'package:main_app/services/support_function.dart';
 
 class FirebaseAuthHelper{
+  //AUTHENTICATION 
   static Future<User?> registerUsingEmailAndPassword({
     required String name,
     required String email,
@@ -43,8 +44,6 @@ class FirebaseAuthHelper{
     }
     // return user;
   }
-
-
   static Future<User?> signInUsingEmailAndPassword({
     required String email,
     required String password,
@@ -65,7 +64,6 @@ class FirebaseAuthHelper{
     }
     return user;
   }
-
   static Future<UserCredential?> signInUsingGoogle() async{
     //trigger authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
@@ -79,7 +77,6 @@ class FirebaseAuthHelper{
     //once signed in, return the UserCredential 
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
-
   static Future<void> updateFirebaseDatabase(User? user) async{
     try{
       DatabaseReference ref = FirebaseDatabase.instance.ref('users/' + user!.uid);
@@ -95,6 +92,8 @@ class FirebaseAuthHelper{
     }
   }
 
+
+  //NOTE HANDLE IN FIREBASE
   static Future<void> addANoteToFirebase(Note note) async{
     try{
       DatabaseReference ref = FirebaseDatabase.instance.ref('notes/' + note.noteId);
@@ -112,6 +111,29 @@ class FirebaseAuthHelper{
       print(e);
     }
   }
+  static Future<void> updateNote(String title, String content, String id) async{
+    try{
+      DatabaseReference ref = FirebaseDatabase.instance.ref('notes/${id}');
+      await ref.update({
+        'noteTitle': title,
+        'noteContent': content,
+      });
+    }catch(e){
+      print(e);
+    }
+  }
+  static Future<void> updateNoteSkin(String skin, String noteId) async{
+    try{
+      DatabaseReference ref = FirebaseDatabase.instance.ref('notes/$noteId');
+      await ref.update({
+        'noteSkin' : skin,
+      });
+    }catch(e){
+      print(e);
+    }
+  }
+
+  //EVENT HANDLE IN FIREBASE
   static Future<void> addEventToFirebase(Event event) async{
     try{
       DatabaseReference ref = FirebaseDatabase.instance.ref('events/${event.eventId}');
@@ -127,18 +149,7 @@ class FirebaseAuthHelper{
     }
   }
 
-  static Future<void> updateNote(String title, String content, String id) async{
-    try{
-      DatabaseReference ref = FirebaseDatabase.instance.ref('notes/${id}');
-      await ref.update({
-        'noteTitle': title,
-        'noteContent': content,
-      });
-    }catch(e){
-      print(e);
-    }
-  }
-
+  //USER INFORMATION HANDLE IN FIREBASE
   static Future<void> updateUserInfo(String name, String bio, User? user) async{
     try{
       DatabaseReference ref = FirebaseDatabase.instance.ref('users/${user!.uid}');
@@ -152,17 +163,7 @@ class FirebaseAuthHelper{
     }
   }
 
-  static Future<void> updateNoteSkin(String skin, String noteId) async{
-    try{
-      DatabaseReference ref = FirebaseDatabase.instance.ref('notes/$noteId');
-      await ref.update({
-        'noteSkin' : skin,
-      });
-    }catch(e){
-      print(e);
-    }
-  }
-  
+  //TASK HANDLE IN FIREBASE 
   static Future<void> addTaskToFirebase(Task task, List<TaskDetail> list) async{
     try{
       DatabaseReference ref = FirebaseDatabase.instance.ref('tasks/${task.taskId}');
@@ -187,7 +188,6 @@ class FirebaseAuthHelper{
       print(e);
     }
   }
-
   static Future<void> updateTaskDetailStatus(String id, bool value) async{
     try{
       DatabaseReference ref = FirebaseDatabase.instance.ref('taskDetails/${id}');
@@ -208,7 +208,6 @@ class FirebaseAuthHelper{
       print(e);
     }
   }
-
   static Future<void> updateTaskDetailList(List<TaskDetail> list) async{
     try{
       DatabaseReference ref = FirebaseDatabase.instance.ref('taskDetails');
@@ -221,8 +220,7 @@ class FirebaseAuthHelper{
       print(e);
     }
   }
-
-  static Future<void> addANewTaskDetail(TaskDetail t) async{
+  static Future<void> addANewTaskDetail(TaskDetail t, String taskId, int value) async{
     try{
       DatabaseReference ref = FirebaseDatabase.instance.ref('taskDetails/${t.taskDetailId}');
       await ref.set({
@@ -230,6 +228,40 @@ class FirebaseAuthHelper{
         'taskId': t.taskId,
         'taskDetailContent': t.taskDetailContent,
         'taskDetailStatus': t.taskDetailStatus,
+      });
+      DatabaseReference ref2 = FirebaseDatabase.instance.ref('tasks/$taskId');
+      await ref2.update({
+        'taskNumberOfDetail': value,
+      });
+    }catch(e){
+      print(e);
+    }
+  }
+  static Future<void> updateTaskDetailContent(String taskDetailId, String newContent) async{
+    print('update task detail content -- ' + taskDetailId);
+    print('upadte task detail content --' + newContent);
+    try{
+      DatabaseReference ref = FirebaseDatabase.instance.ref('taskDetails/$taskDetailId');
+      await ref.update({
+       'taskDetailContent': newContent, 
+      });
+    }catch(e){
+      print(e);
+    }
+  }
+  static Future<void> deleteATaskDetail(String id, String taskId, int value) async{
+    try{
+      DatabaseReference ref = FirebaseDatabase.instance.ref('taskDetails/$id');
+      print(id);
+      await ref.remove().then((_){
+        print('delete successful!!!');
+      })
+      .catchError((e){
+        print('there is something wrong $e ');
+      });
+      DatabaseReference ref2 = FirebaseDatabase.instance.ref('tasks/$taskId');
+      await ref2.update({
+        'taskNumberOfDetail': value,
       });
     }catch(e){
       print(e);

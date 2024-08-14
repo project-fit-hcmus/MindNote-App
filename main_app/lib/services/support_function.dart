@@ -211,5 +211,12 @@ class SupportFunction{
         else if (hour < 21) return 'Good Evening';
           else return 'Good Night';
   }
+  static String CreateRandomIdForTaskChild(String taskId, int value){
+    String temp = '';
+    if(value.toString().length == 1) temp += '00' + value.toString();
+    else if(value.toString().length == 2) temp += '0' + value.toString();
+      else if(value.toString().length == 3) temp += value.toString();
+    return 'TASKDEAIL' + taskId + temp; 
+  }
 }
 

@@ -27,4 +27,7 @@ class TaskDetail{
   setTaskId(String id){
     this.taskId = id;
   }
+  setTaskDetailId(String id){
+    this.taskDetailId = id;
+  }
 }
