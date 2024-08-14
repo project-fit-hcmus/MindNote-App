@@ -203,5 +203,13 @@ class SupportFunction{
     }
     return result;
   }
+  static String getTimeOfDay(){
+    DateTime time = DateTime.now();
+    int hour = time.hour;
+    if(hour < 12) return 'Good Morning';
+      else if(hour < 17) return 'Good Afternoon';
+        else if (hour < 21) return 'Good Evening';
+          else return 'Good Night';
+  }
 }
 

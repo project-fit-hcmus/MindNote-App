@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:main_app/database/entities/Note.dart';
 import 'package:main_app/database/entities/Event.dart';
 import 'package:main_app/database/entities/Task.dart';
+import 'package:main_app/database/entities/TaskDetail.dart';
 import 'package:main_app/services/support_function.dart';
 
 class FirebaseAuthHelper{
@@ -79,16 +80,6 @@ class FirebaseAuthHelper{
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
-  // static Future<UserCredential?> signUnUsingFacebook() async{
-  //   // Trigger the sign-in flow
-  //   final LoginResult loginResult = await FacebookAuth.instance.login();
-
-  //   // Create a credential from the access token
-  //   final OAuthCredential facebookAuthCredential = FacebookAuthProvider.credential(loginResult.accessToken!.tokenString);
-
-  //   // Once signed in, return the UserCredential
-  //   return FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
-  // }
   static Future<void> updateFirebaseDatabase(User? user) async{
     try{
       DatabaseReference ref = FirebaseDatabase.instance.ref('users/' + user!.uid);
@@ -172,7 +163,7 @@ class FirebaseAuthHelper{
     }
   }
   
-  static Future<void> addTaskToFirebase(Task task) async{
+  static Future<void> addTaskToFirebase(Task task, List<TaskDetail> list) async{
     try{
       DatabaseReference ref = FirebaseDatabase.instance.ref('tasks/${task.taskId}');
       await ref.set({
@@ -184,14 +175,62 @@ class FirebaseAuthHelper{
 
       });
       DatabaseReference ref2 = FirebaseDatabase.instance.ref('taskDetails/');
-      for(int i = 0 ; i < task.taskDetail.length; ++i){
-        await ref2.child('/${task.taskDetail[i].taskDetailId}').set({
-          'taskDetailId': task.taskDetail[i].taskDetailId,
+      for(int i = 0 ; i < list.length; ++i){
+        await ref2.child('/${list[i].taskDetailId}').set({
+          'taskDetailId': list[i].taskDetailId,
           'taskId': task.taskId,
-          'taskDetailContent': task.taskDetail[i].taskDetailContent,
-          'taskDetailStatus': task.taskDetail[i].taskDetailStatus,
+          'taskDetailContent': list[i].taskDetailContent,
+          'taskDetailStatus': list[i].taskDetailStatus,
         }); 
       }
+    }catch(e){
+      print(e);
+    }
+  }
+
+  static Future<void> updateTaskDetailStatus(String id, bool value) async{
+    try{
+      DatabaseReference ref = FirebaseDatabase.instance.ref('taskDetails/${id}');
+        await ref.update({
+          'taskDetailStatus': value,
+        });
+    }catch(e){
+      print(e);
+    }
+  }
+  static Future<void> updateTaskNumberOfComplete(String taskId, int value) async{
+    try{
+      DatabaseReference ref = FirebaseDatabase.instance.ref('tasks/${taskId}');
+      await ref.update({
+        'taskNumberOfComplete': value,
+      });
+    }catch(e){
+      print(e);
+    }
+  }
+
+  static Future<void> updateTaskDetailList(List<TaskDetail> list) async{
+    try{
+      DatabaseReference ref = FirebaseDatabase.instance.ref('taskDetails');
+      for(int i = 0; i < list.length; ++i){
+        await ref.child(list[i].taskDetailId).update({
+          'taskDetailContent': list[i].taskDetailContent,
+        });
+      }
+    }catch(e){
+      print(e);
+    }
+  }
+
+  static Future<void> addANewTaskDetail(TaskDetail t) async{
+    try{
+      DatabaseReference ref = FirebaseDatabase.instance.ref('taskDetails/${t.taskDetailId}');
+      await ref.set({
+        'taskDetailId': t.taskDetailId,
+        'taskId': t.taskId,
+        'taskDetailContent': t.taskDetailContent,
+        'taskDetailStatus': t.taskDetailStatus,
+      });
     }catch(e){
       print(e);
     }

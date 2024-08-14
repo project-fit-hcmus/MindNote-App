@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:main_app/database/entities/Task.dart';
+import 'package:main_app/screens/taskDetail.dart';
 import 'package:main_app/services/firebase_auth_helper.dart';
 import 'package:main_app/services/support_function.dart';
 import 'package:provider/provider.dart';
@@ -149,7 +151,16 @@ class _TasksScreenState extends State<TasksScreen>{
             if(value['taskUser'] == user!.uid){
               items.add(GestureDetector(
                 onTap: (){
+                  Task t = Task(
+                    taskId: value['taskId'], 
+                    taskUser: value['taskUser'], 
+                    taskTitle: value['taskTitle'], 
+                    taskNumberOfComplete: value['taskNumberOfComplete'], 
+                    taskNumberOfDetail: value['taskNumberOfDetail'], 
+                  );
                   // TODO: VIEW DETAIL OF A TASK
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=> TaskDetailScreen(task: t)));
+                  
                 },
                 child: Container(
                   padding: EdgeInsets.only(left: 10),
@@ -160,7 +171,6 @@ class _TasksScreenState extends State<TasksScreen>{
                     child: Row(
                       // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-
                         //A LINE OF COLOR 
                         Container(
                           height: 100,  
@@ -201,6 +211,7 @@ class _TasksScreenState extends State<TasksScreen>{
                                 // alignment: Alignment.centerLeft,
                                 margin: EdgeInsets.only(left: 20),
                                 child: Text(
+                                  overflow: TextOverflow.ellipsis,
                                   '${value['taskTitle']}',
                                   style: GoogleFonts.sofiaSansSemiCondensed(
                                     fontSize: 20,
@@ -316,6 +327,7 @@ class CirclePainter extends CustomPainter {
   }
 }
 
+// class support for add a new task 
 class TaskAlertDialog extends StatefulWidget{
   const TaskAlertDialog({super.key});
   @override
@@ -398,11 +410,10 @@ class _TaskAlertDialogState extends State<TaskAlertDialog>{
               taskId: taskId, 
               taskUser: user!.uid, 
               taskTitle: _taskTitleControler.text, 
-              taskDetail: list,
               taskNumberOfComplete: 0,
               taskNumberOfDetail: list.length,
             );
-            FirebaseAuthHelper.addTaskToFirebase(t);
+            FirebaseAuthHelper.addTaskToFirebase(t,list);
             
 
             Navigator.of(context).pop();

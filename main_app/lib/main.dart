@@ -7,6 +7,7 @@ import 'package:main_app/screens/register.dart';
 import 'package:main_app/screens/search.dart';
 import 'package:main_app/screens/setting.dart';
 import 'package:main_app/screens/started.dart';
+import 'package:main_app/screens/taskDetail.dart';
 import 'package:main_app/screens/tasksManager.dart';
 import 'screens/login.dart';
 import 'Theme/mainTheme.dart';
@@ -56,6 +57,7 @@ class MyApp extends StatelessWidget {
         '/edit': (context) => const EditProfile(),
         '/calendar': (context) => const CalendarScreen(),
         '/tasks': (context) => const TasksScreen(),
+        // '/taskdetails': (context) => const TaskDetailScreen(),
       },
 
       title: 'Flutter Demo',

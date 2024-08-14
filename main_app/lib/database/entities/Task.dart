@@ -1,5 +1,4 @@
 import 'package:floor/floor.dart';
-import 'package:main_app/database/entities/TaskDetail.dart';
 
 class Task{
   @primaryKey
@@ -13,8 +12,6 @@ class Task{
   int taskNumberOfDetail;
   @ColumnInfo(name: 'taskNumberOfComplete')
   int taskNumberOfComplete;
-  @ColumnInfo(name: 'taskDetail')
-  final List<TaskDetail> taskDetail;
 
   
   Task({
@@ -23,6 +20,5 @@ class Task{
     required String this.taskTitle,
     required int this.taskNumberOfComplete,
     required int this.taskNumberOfDetail,
-    required List<TaskDetail> this.taskDetail,
   });
 }
