@@ -58,6 +58,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '534110908892',
     projectId: 'mindnoteapp-e5af4',
     storageBucket: 'mindnoteapp-e5af4.appspot.com',
+    databaseURL: "https://mindnoteapp-e5af4-default-rtdb.asia-southeast1.firebasedatabase.app",      //add new IMPORTATNT
+
   );
 
   static const FirebaseOptions ios = FirebaseOptions(

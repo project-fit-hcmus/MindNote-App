@@ -225,7 +225,13 @@ class _$NoteDAO extends NoteDAO {
             noteContent: row['noteContent'] as String,
             noteNumberCharacters: row['noteNumberCharacters'] as int,
             noteDetail: row['noteDetail'] as String,
-            noteSkin: row['noteSkin'] as String));
+            noteSkin: row['noteSkin'] as String,
+            noteFormatBold: row['noteFormatBold'] as bool,
+            noteFormatItalic: row['noteFormatItalic'] as bool,
+            noteFormatLine: row['noteFormatLine'] as bool,
+            noteFormatSize: row['noteFormatSize'] as double,
+        ));
+            
   }
 
   @override
@@ -239,7 +245,12 @@ class _$NoteDAO extends NoteDAO {
             noteContent: row['noteContent'] as String,
             noteNumberCharacters: row['noteNumberCharacters'] as int,
             noteDetail: row['noteDetail'] as String,
-            noteSkin: row['noteSkin'] as String,),
+            noteSkin: row['noteSkin'] as String,
+            noteFormatBold: row['noteFormatBold'] as bool,
+            noteFormatItalic: row['noteFormatItalic'] as bool,
+            noteFormatLine: row['noteFormatLine'] as bool,
+            noteFormatSize: row['noteFormatSize'] as double,
+            ),
         arguments: [Uid]);
   }
 

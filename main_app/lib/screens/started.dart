@@ -146,6 +146,10 @@ class _StartedScreenState extends State<StartedScreen>{
                           noteContent: value['noteContent'],
                           noteNumberCharacters: value['noteNumberOfCharacter'],
                           noteSkin: value['noteSkin'],
+                          noteFormatBold: value['noteFormatBold'],
+                          noteFormatItalic: value['noteFormatItalic'],
+                          noteFormatLine: value['noteFormatLine'],
+                          noteFormatSize: value['noteFormatSize'],
                         ),
                       )
                     ),

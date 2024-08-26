@@ -1,7 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:main_app/database/database.dart';
-import 'package:main_app/database/entities/Account.dart';
 class DatabaseHelper{
   static void initialLocalDatabase(User? user) async{
     // final database = await $FloorAppDatabase.databaseBuilder('mind_note_database.db').build();

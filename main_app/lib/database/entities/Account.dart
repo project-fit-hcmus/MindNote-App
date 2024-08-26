@@ -1,5 +1,4 @@
 import 'package:floor/floor.dart';
-import 'package:flutter/foundation.dart';
 @entity
 class Account{
   @primaryKey

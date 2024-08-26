@@ -35,20 +35,23 @@
 <body>
   <script src="flutter_bootstrap.js" async></script>
   <!-- these lines below are for google/facebook authentication  -->
-  <!-- <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>  
+
+<!--    //FAILED FOR GET DATABASE IN WEB 
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>  
   <script>
     var firebaseConfig = {
       apiKey: "AIzaSyDdVzL2_7Y31yw9j8NTXVCCtQVA9ZHmrqk",
-      authDomain: "mindnoteapp-e5af4.firebaseapp.com", -->
-      <!-- databaseURL: "https://[YOUR_PROJECT].firebaseio.com",  -->
-      <!-- projectId: "mindnoteapp-e5af4",
+      authDomain: "mindnoteapp-e5af4.firebaseapp.com",
+      databaseURL: "https://mindnoteapp-e5af4-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "mindnoteapp-e5af4",
       storageBucket: "mindnoteapp-e5af4.appspot.com",
-      messagingSenderId: "534110908892'",
+      messagingSenderId: "534110908892",
       appId: "1:534110908892:web:5762058386a11d44fb9f19",
-      measurementId: "G-NHK7H6GD41",
-    };  -->
-    <!-- // Initialize Firebase -->
-    <!-- firebase.initializeApp(firebaseConfig);  -->
-  <!-- </script> -->
+      measurementId: "G-NHK7H6GD41"
+    }; 
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+  </script> -->
 </body>
 </html>

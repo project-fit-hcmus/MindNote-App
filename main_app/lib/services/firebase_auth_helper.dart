@@ -106,6 +106,10 @@ class FirebaseAuthHelper{
         'noteNumberOfCharacter': note.noteNumberCharacters,
         'noteDetail': note.noteDetail,
         'noteSkin': note.noteSkin,
+        'noteFormatBold': note.noteFormatBold,
+        'noteFormatItalic': note.noteFormatItalic,
+        'noteFormatLine': note.noteFormatLine,
+        'noteFormatSize': note.noteFormatSize,
       });
     }catch(e){
       print(e);
@@ -132,7 +136,27 @@ class FirebaseAuthHelper{
       print(e);
     }
   }
-
+  static Future<void> updateNoteFormat(String noteId,bool formatBold, bool formatItalic, bool formatLine, double size) async{
+    try{
+      DatabaseReference ref = FirebaseDatabase.instance.ref('notes/$noteId');
+      await ref.update({
+        'noteFormatBold': formatBold,
+        'noteFormatItalic': formatItalic,
+        'noteFormatLine': formatLine,
+        'noteFormatSize': size,
+      });
+    }catch(e){
+      print(e);
+    }
+  }
+  static Future<void> deleteANote(String noteId) async{
+    try{
+      DatabaseReference ref = FirebaseDatabase.instance.ref('notes/$noteId');
+      ref.remove();
+    }catch(e){
+      print(e);
+    }
+  } 
   //EVENT HANDLE IN FIREBASE
   static Future<void> addEventToFirebase(Event event) async{
     try{

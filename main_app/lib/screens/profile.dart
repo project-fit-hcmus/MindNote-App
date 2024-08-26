@@ -84,7 +84,7 @@ class _ProfileScreenState extends State<ProfileScreen>{
 
   Widget CreateHeaderProfile(BuildContext context, ThemeData theme, double realWidth){
     return Container(
-      margin: EdgeInsets.only(top: 60, left: 20, right: 20),
+      margin: EdgeInsets.only(top: 60,),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -101,7 +101,7 @@ class _ProfileScreenState extends State<ProfileScreen>{
                   ),
                 ),
                 Container(
-                  width: realWidth* 2/3,
+                  // width: realWidth* 2/3,
                   child: Text(
                     'Profile',
                     style: theme.textTheme.headlineLarge,

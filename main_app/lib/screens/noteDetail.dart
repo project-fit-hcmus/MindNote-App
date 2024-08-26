@@ -22,17 +22,47 @@ class _NoteDetailScreenState extends State<NoteDetailScreen>{
   int _wordCount = 0;       // NUMBER OF CHARACTER
   bool isChange = false;
   bool setSkin = false;
+  bool setText = false;
+  bool formatBold = false;
+  bool formatItalic = false;
+  bool formatLine = false;
   int skinVersion = -1;
+  double curTextSize = 15.0;
 
+
+  void _updateFormatBold(){
+    setState(() {
+      formatBold = !formatBold;
+    });
+  }
+  void _updateFormatItalic(){
+    setState(() {
+      formatItalic = !formatItalic;
+    });
+  }
+  void _updateFormatLine(){
+    setState(() {
+      formatLine = !formatLine;
+    });
+  }
+  void _updateTextSize(double size){
+    setState(() {
+      curTextSize = size;
+    });
+  }
   void _updateSkinVersion(int i){
     setState(() {
       skinVersion = i;
     });
   }
-
   void _updateSetSkin(){
     setState(() {
       setSkin = !setSkin;
+    });
+  }
+  void _updateSetText(){
+    setState(() {
+      setText = !setText;
     });
   }
 
@@ -70,6 +100,10 @@ class _NoteDetailScreenState extends State<NoteDetailScreen>{
     _textEditingController.text = widget.note.noteContent;
     _textTitleEditingController.text = widget.note.noteTitle;
     skinVersion = SupportFunction.ConvertToIntSkinVersion(widget.note.noteSkin);
+    formatBold = widget.note.noteFormatBold;
+    formatItalic = widget.note.noteFormatItalic;
+    formatLine = widget.note.noteFormatLine;
+    curTextSize = widget.note.noteFormatSize;
     _updateWordCount();
 
   }
@@ -96,21 +130,23 @@ class _NoteDetailScreenState extends State<NoteDetailScreen>{
       home: Scaffold(
         extendBodyBehindAppBar: true,
         backgroundColor: themeModeProvider.themeMode.primaryColor,
-        body: Container(
-          decoration: BoxDecoration(
-            image:DecorationImage(
-              image: AssetImage( (skinVersion != -1) ? skins[skinVersion] : ''),
-              fit: BoxFit.cover,
-            ),            
+        body: SingleChildScrollView(
+          child: Container(
+            decoration: BoxDecoration(
+              image:DecorationImage(
+                image: AssetImage( (skinVersion != -1) ? skins[skinVersion] : ''),
+                fit: BoxFit.cover,
+              ),            
+            ),
+            child:  Column(
+              children: [
+                SizedBox(height: 60,),
+                CreateHeaderNewNote(context,themeModeProvider.themeMode, size),
+                SizedBox(height: 10,),
+                CreateContentArea(context, themeModeProvider.themeMode, size, height)
+              ],
+            ),  
           ),
-          child:  Column(
-        children: [
-          SizedBox(height: 60,),
-          CreateHeaderNewNote(context,themeModeProvider.themeMode, size),
-          SizedBox(height: 10,),
-          CreateContentArea(context, themeModeProvider.themeMode, size, height)
-        ],
-        ),  
         ),
       ),
     );
@@ -209,7 +245,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen>{
         ),
         Container(
           margin: EdgeInsets.only(left: 20, right: 20),
-          height: (!setSkin) ? realHeight*1.8/3 : realHeight * 1.5/3,
+          height: (!setSkin && !setText) ? realHeight*1.94/3 : realHeight * 1.6/3,
           child: Material(
               color: Colors.transparent,
               child:TextField(
@@ -219,7 +255,13 @@ class _NoteDetailScreenState extends State<NoteDetailScreen>{
                   _updateChangeState(_textTitleEditingController.text, text),
                 },
                 maxLines: 30,
-                style: (skinVersion == -1) ? theme.textTheme.displayMedium : AppThemeLight.textTheme.displayMedium,
+                style: TextStyle(
+                  fontSize: curTextSize,
+                  fontStyle: (formatItalic ? FontStyle.italic : FontStyle.normal),
+                  fontWeight: (formatBold ? FontWeight.bold : FontWeight.normal),
+                  decoration: (formatLine ? TextDecoration.lineThrough : TextDecoration.none),
+                ),
+                // style: (skinVersion == -1) ? theme.textTheme.displayMedium : AppThemeLight.textTheme.displayMedium,
                 decoration: InputDecoration(
                   // hintText: '${widget.note.noteContent}',
                   focusedBorder: UnderlineInputBorder(
@@ -235,6 +277,8 @@ class _NoteDetailScreenState extends State<NoteDetailScreen>{
         Divider(),
         if(setSkin)
           createHorizontalSkin(),
+        if(setText)
+          CreateHorizontalTextSetup(theme),
         CreateBottomSetup(context, theme, realWidth, realHeight),
       ],
     );
@@ -264,7 +308,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen>{
         children: [
           IconButton(
             onPressed: (){
-              //TODO SOMETHING
+              //CLICK ON BUTTON SKIN
               if(text == 'Skin'){
                 if(setSkin == true){
                   print('update skin');
@@ -272,6 +316,18 @@ class _NoteDetailScreenState extends State<NoteDetailScreen>{
                   FirebaseAuthHelper.updateNoteSkin(SupportFunction.ConvertToStringSkinVersion(skinVersion), widget.note.noteId);
                 }
                 _updateSetSkin();
+              }
+              //CLICK ON BUTTON TEXT
+              if(text == 'Text'){
+                if(setText == true){
+                  FirebaseAuthHelper.updateNoteFormat(widget.note.noteId, formatBold, formatItalic, formatLine, curTextSize);
+                }
+                _updateSetText();
+              }
+              //CLICK ON BUTTON DELETE
+              if(text == 'Delete'){
+                FirebaseAuthHelper.deleteANote(widget.note.noteId);
+                Navigator.of(context).pop();
               }
 
             }, 
@@ -327,6 +383,74 @@ class _NoteDetailScreenState extends State<NoteDetailScreen>{
           );
         },
       )    
+    );
+  }
+  Widget CreateHorizontalTextSetup(ThemeData theme){
+    return Container(
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              IconButton(
+                
+                style: IconButton.styleFrom(
+                  backgroundColor: (formatBold ? theme.secondaryHeaderColor : Colors.transparent),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  )
+                ),
+                onPressed: (){
+                  _updateFormatBold();
+                }, 
+                icon: Icon(
+                  Icons.format_bold_outlined,
+                ),
+              ),
+              IconButton(
+                style: IconButton.styleFrom(
+                  backgroundColor: (formatItalic ? theme.secondaryHeaderColor : Colors.transparent),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  )
+                ),
+                onPressed: (){
+                  _updateFormatItalic();
+                }, 
+                icon: Icon(
+                  Icons.format_italic_outlined,
+                ),
+              ),
+              IconButton(
+                style: IconButton.styleFrom(
+                  backgroundColor: (formatLine ? theme.secondaryHeaderColor : Colors.transparent),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  )
+                ),
+                onPressed: (){
+                  _updateFormatLine();
+                }, 
+                icon: Icon(
+                  Icons.format_clear,
+                ),
+              )
+            ], 
+          ),
+          Slider(
+              value: curTextSize,
+              onChanged: (double value){
+                _updateTextSize(value);
+              },
+              divisions: 4,
+              
+              max: 25,
+              min: 15,
+              label: curTextSize.round().toString(),
+            ),
+        ],
+      ),
+      
     );
   }
 }

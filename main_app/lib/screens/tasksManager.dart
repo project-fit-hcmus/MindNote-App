@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+// import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:main_app/database/entities/Task.dart';
 import 'package:main_app/screens/taskDetail.dart';
@@ -339,6 +339,7 @@ class _TaskAlertDialogState extends State<TaskAlertDialog>{
   
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.sizeOf(context).width;
     User? user = FirebaseAuth.instance.currentUser;
     return AlertDialog(
       scrollable: true,
@@ -362,7 +363,7 @@ class _TaskAlertDialogState extends State<TaskAlertDialog>{
                   children: [
                     Icon(Icons.check_box_outlined),
                     Container(
-                      width: 200,
+                      width: width * 1 / 3,
                       height: 40,
                       child: TextField(
                         autofocus: true,

@@ -1,10 +1,6 @@
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:main_app/database/entities/Event.dart';
 import 'dart:math';
-
-import 'package:sqflite/utils/utils.dart';
-
 
 class SupportFunction{
   static String getFormatedDate(){

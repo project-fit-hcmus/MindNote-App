@@ -1,5 +1,3 @@
-import 'dart:ui_web';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +6,6 @@ import 'package:main_app/Theme/mainTheme.dart';
 import 'package:main_app/screens/noteDetail.dart';
 import 'package:main_app/services/support_function.dart';
 import 'package:provider/provider.dart';
-import 'package:main_app/Theme/mainTheme.dart';
 import 'package:main_app/database/entities/Note.dart';
 class SearchScreen extends StatefulWidget{
   const SearchScreen ({super.key});
@@ -44,7 +41,7 @@ class _SearchScreenState extends State<SearchScreen> {
   }
   Widget CreateSearchHeader(ThemeData theme, double realWidth){
     return Container(
-      margin: EdgeInsets.only(top: 60, left: 10, right: 10),
+      margin: EdgeInsets.only(top: 60),
       child: Row(
         children: [
           IconButton(
@@ -62,7 +59,7 @@ class _SearchScreenState extends State<SearchScreen> {
               // TEXT FIELD ~ SEARCH BOX
               Container(
                 color: Colors.transparent,
-                width: realWidth * 3/4,
+                width: realWidth * 2.2/3,
                 child: Material(
                   color: Colors.transparent,
                   child: TextField(
@@ -157,6 +154,10 @@ class _SearchScreenState extends State<SearchScreen> {
                           noteContent: value['noteContent'],
                           noteNumberCharacters: value['noteNumberOfCharacter'],
                           noteSkin: value['noteSkin'],
+                          noteFormatBold: value['noteFormatBold'],
+                          noteFormatItalic: value['noteFormatItalic'],
+                          noteFormatLine: value['noteFormatLine'],
+                          noteFormatSize: value['noteFormatSize'],
                         ),
                       )
                     ),

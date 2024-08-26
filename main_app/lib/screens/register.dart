@@ -1,11 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+// import 'package:flutter/services.dart';
+// import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:main_app/Theme/mainTheme.dart';
 import 'package:main_app/services/firebase_auth_helper.dart';
-// import 'package:firebase_database/firebase_database.dart';
 
 
 class RegisterScreen extends StatefulWidget{
